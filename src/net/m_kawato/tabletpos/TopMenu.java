@@ -29,6 +29,7 @@ public class TopMenu extends Activity implements OnClickListener {
 
         // Initialization
         globals = (Globals) this.getApplication();
+        globals.initialize();
         loadProductData();
         globals.routes.add("Route 10");
         globals.routes.add("Route 20");
