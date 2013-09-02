@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TabletPOS</string>
+    <string name="action_settings">Settings</string>
+    <string name="back">Back</string>
+    <string name="update">Update</string>
+    <string name="currency">Rs.</string>
+    <string name="title_activity_main_menu">TabletPOS</string>
+    <string name="title_activity_order">Order</string>
+    <string name="title_activity_confirm">Confirm</string>
+    <string name="title_activity_receipt">Receipt</string>
+    <string name="title_dialog_order_input">Order Input</string>
+    <string name="title_dialog_credit_input">Credit Input</string>
+    <string name="start">Order Input</string>
+    <string name="about">About</string>
+    <string name="category">Category</string>
+    <string name="order">Order</string>
+    <string name="confirm">Confirm</string>
+    <string name="receipt">Receipt</string>
+    <string name="export">Export</string>
+    <string name="route">Route</string>
+    <string name="route_label">Route:</string>
+    <string name="place">Shop</string>
+    <string name="place_label">Shop:</string>
+    <string name="product">Product</string>
+    <string name="product_label">Product:</string>
+    <string name="unit_price">Unit Price</string>
+    <string name="unit_price_box">Price/Box</string>
+    <string name="quantity">Quantity\n(piece)</string>
+    <string name="quantity_label">Quantity (piece):</string>
+    <string name="quantity_box">Quantity\n(box)</string>
+    <string name="quantity_box_label">Quantity (box):</string>
+    <string name="down">-</string>
+    <string name="up">+</string>
+    <string name="amount">Amount</string>
+    <string name="total_price">Total Price</string>
+    <string name="total_amount_label">Total Amount:</string>
+    <string name="credit_amount_label">Credit Amount:</string>
+    <string name="cash_amount_label">Cash Amount:</string>
+</resources>
