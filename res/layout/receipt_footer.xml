@@ -78,6 +78,17 @@
             android:text="@string/confirm" />
 
         <Button
+            android:id="@+id/btn_gototop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:drawableLeft="@android:drawable/ic_menu_edit"
+            android:paddingLeft="10dp"
+            android:paddingRight="20dp"
+            android:drawablePadding="10dp"
+            android:text="@string/gototop" />
+
+        <Button
             android:id="@+id/btn_export"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -76,6 +76,10 @@ public class Receipt extends Activity implements OnClickListener {
         Button btnConfirm = (Button) findViewById(R.id.btn_confirm);
         btnConfirm.setOnClickListener(this);
 
+        // "Enter New Order" button (aka. go to top)
+        Button btnGotoTop = (Button) findViewById(R.id.btn_gototop);
+        btnGotoTop.setOnClickListener(this);
+        
         // "Export" button
         Button btnExport = (Button) findViewById(R.id.btn_export);
         btnExport.setOnClickListener(this);
@@ -94,6 +98,11 @@ public class Receipt extends Activity implements OnClickListener {
         switch (v.getId()) {
         case R.id.btn_confirm:
             i = new Intent(this, Confirm.class);
+            startActivity(i);
+            break;
+        case R.id.btn_gototop:
+            globals.initialize();
+            i = new Intent(this, Order.class);
             startActivity(i);
             break;
         case R.id.btn_export:

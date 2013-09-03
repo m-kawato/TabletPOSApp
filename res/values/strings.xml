@@ -11,13 +11,14 @@
     <string name="title_activity_receipt">Receipt</string>
     <string name="title_dialog_order_input">Order Input</string>
     <string name="title_dialog_credit_input">Credit Input</string>
-    <string name="start">Order Input</string>
+    <string name="start">Enter Order</string>
     <string name="about">About</string>
     <string name="category">Category</string>
     <string name="order">Order</string>
     <string name="confirm">Confirm</string>
     <string name="receipt">Receipt</string>
     <string name="export">Export</string>
+    <string name="gototop">Enter New Order</string>
     <string name="route">Route</string>
     <string name="route_label">Route:</string>
     <string name="place">Shop</string>

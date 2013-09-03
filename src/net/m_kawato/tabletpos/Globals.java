@@ -2,7 +2,6 @@ package net.m_kawato.tabletpos;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,12 +30,12 @@ public class Globals extends Application {
     public BigDecimal creditAmount;
 
     public void initialize() {
-        this.products = new ArrayList<Product>();
-        this.categories = new ArrayList<String>();
-        this.routes = new ArrayList<String>();
-        this.places = new HashMap<String, List<String>>();
-        this.routeName = new HashMap<String, String>();
-        this.placeName = new HashMap<String, String>();
+        if (this.products != null) {
+            for(Product p: this.products) {
+                p.quantity = 0;
+                p.quantityBox = 0;
+            }
+        }
         this.orderItems = new ArrayList<Product>();
         this.orderItemList = new ArrayList<Map<String, Object>>();
         this.selectedRoute = 0;

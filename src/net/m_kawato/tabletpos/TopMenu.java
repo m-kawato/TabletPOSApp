@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.os.Bundle;
@@ -65,6 +66,8 @@ public class TopMenu extends Activity implements OnClickListener {
     // load product data from product information file
     private void loadProductData() {
         Log.d(TAG, "loadProductData");
+        globals.products = new ArrayList<Product>();
+        globals.categories = new ArrayList<String>();
         AssetManager as = getResources().getAssets();
         List<String> lines = new ArrayList<String>();
         try {
@@ -105,6 +108,10 @@ public class TopMenu extends Activity implements OnClickListener {
     // load route and place data from place information file
     private void loadPlaceData() {
         Log.d(TAG, "loadPlaceData");
+        globals.routes = new ArrayList<String>(); 
+        globals.places = new HashMap<String, List<String>>();
+        globals.routeName = new HashMap<String, String>();
+        globals.placeName = new HashMap<String, String>();
         AssetManager as = getResources().getAssets();
         List<String> lines = new ArrayList<String>();
         try {
