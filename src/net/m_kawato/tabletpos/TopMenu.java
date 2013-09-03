@@ -31,12 +31,7 @@ public class TopMenu extends Activity implements OnClickListener {
         globals = (Globals) this.getApplication();
         globals.initialize();
         loadProductData();
-        globals.routes.add("Route 10");
-        globals.routes.add("Route 20");
-        globals.routes.add("Route 30");
-        globals.places.add("RRP_1");
-        globals.places.add("RRP_2");
-        globals.places.add("RRP_3");
+        loadPlaceData();
         
         // "Order Input" button
         Button btnStart = (Button) findViewById(R.id.btn_start);
@@ -67,7 +62,7 @@ public class TopMenu extends Activity implements OnClickListener {
         return true;
     }
 
-    // load product data from product information file (products.csv)
+    // load product data from product information file
     private void loadProductData() {
         Log.d(TAG, "loadProductData");
         AssetManager as = getResources().getAssets();
@@ -104,6 +99,46 @@ public class TopMenu extends Activity implements OnClickListener {
             Product p = new Product(this, productId, productName, category, unitPrice, unitPriceBox, numPiecesInBox);
             globals.products.add(p);
             globals.addCategory(category);
+        }
+    }
+
+    // load route and place data from place information file
+    private void loadPlaceData() {
+        Log.d(TAG, "loadPlaceData");
+        AssetManager as = getResources().getAssets();
+        List<String> lines = new ArrayList<String>();
+        try {
+            InputStream is = as.open(Globals.PLACES_FILENAME);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while((line = reader.readLine()) != null){     
+                lines.add(line);    
+            } 
+            is.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to open product information file");
+        }
+
+        for(int i = 0; i < lines.size(); i++) {
+            String[] lineSplit = lines.get(i).split("\\s*?,\\s*?");
+            // skip comment line
+            try {
+                Integer.parseInt(lineSplit[0]);
+            } catch (NumberFormatException e) {
+                continue;
+            }
+
+            String placeCode = lineSplit[0];
+            String placeName = lineSplit[1];
+            String routeName = lineSplit[4];
+            String routeCode = lineSplit[5];
+
+            Log.d(TAG, String.format("loadPlacetData: " +
+                "placeCode=%s, placeName=%s, routeCode=%s, routeName=%s", 
+                placeCode, placeName, routeCode, routeName));
+            globals.addPlace(routeCode, placeCode);
+            globals.addRouteName(routeCode, routeName);
+            globals.addPlaceName(placeCode, placeName);
         }
     }
 }

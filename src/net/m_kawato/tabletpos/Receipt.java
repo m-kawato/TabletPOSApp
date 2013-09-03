@@ -7,10 +7,6 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
-import net.m_kawato.tabletpos.Confirm;
-import net.m_kawato.tabletpos.Globals;
-import net.m_kawato.tabletpos.Product;
-
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.Activity;
@@ -56,10 +52,14 @@ public class Receipt extends Activity implements OnClickListener {
         Log.d(TAG, String.format("onCreate: selectedRoute=%s, routes.size=%s",
                 globals.selectedRoute, globals.routes.size()));
         TextView routeView = (TextView) findViewById(R.id.route);
-        routeView.setText(globals.routes.get(globals.selectedRoute));
+        String routeCode = globals.routes.get(globals.selectedRoute);
+        String routeName = globals.routeName.get(routeCode);
+        routeView.setText(String.format("%s (%s)", routeName, routeCode));
         
         TextView placeView = (TextView) findViewById(R.id.place);
-        placeView.setText(globals.places.get(globals.selectedPlace));
+        String placeCode = globals.places.get(routeCode).get(globals.selectedPlace);
+        String placeName = globals.placeName.get(placeCode);
+        placeView.setText(String.format("%s (%s)", placeName, placeCode));
 
         // total amount, credit amount and cash amount
         TextView totalAmountView = (TextView) findViewById(R.id.total_amount);
@@ -113,14 +113,18 @@ public class Receipt extends Activity implements OnClickListener {
         Log.d(TAG, String.format("exportReceipt: filename=%s, timestamp=%s", filename, timestamp));
 
         StringBuffer buf = new StringBuffer();
-        buf.append(String.format("%s,%s,%s,%s,%s",
-                timestamp,
-                globals.routes.get(globals.selectedRoute),
-                globals.places.get(globals.selectedPlace),
+        String routeCode = globals.routes.get(globals.selectedRoute);
+        String routeName = globals.routeName.get(routeCode);
+        String placeCode = globals.places.get(routeCode).get(globals.selectedPlace);
+        String placeName = globals.placeName.get(placeCode);
+        
+        buf.append(String.format("%s,%s,%s,%s,%s,%s,%s",
+                timestamp, routeName, routeCode, placeName, placeCode,
                 globals.totalAmount.toString(),
                 globals.creditAmount.toString()));
         for (Product item: globals.orderItems) {
-            buf.append(String.format(",%d,%d",
+            buf.append(String.format(",%s,%d,%d",
+                    item.productName,
                     item.productId,
                     item.quantity + item.quantityBox * item.numPiecesInBox));
         }

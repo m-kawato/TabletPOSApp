@@ -37,7 +37,8 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
         this.productsInCategory = new ArrayList<Product>();
         this.productList = new ArrayList<Map<String, Object>>();
         Log.d(TAG, "onCreate: products.size() = " + globals.products.size());
-        
+        OrderInputHelper orderInputHelper = new OrderInputHelper(this, globals);
+
         // Build ListView for products
         String[] from = {"image", "product_name", "unit_price", "quantity", "unit_price_box", "quantity_box", "amount"};
         int[] to = {R.id.image, R.id.product_name, R.id.unit_price, R.id.quantity, R.id.unit_price_box, R.id.quantity_box, R.id.amount};
@@ -53,27 +54,11 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
         productListView.setOnItemClickListener(this);
         
         // Spinner for route selection
-        ArrayAdapter<String> routeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        routeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        for (String route: globals.routes) {
-            routeAdapter.add(route);
-        }
-        Spinner spnRoute = (Spinner) findViewById(R.id.spn_route);
-        spnRoute.setAdapter(routeAdapter);
-        spnRoute.setSelection(globals.selectedRoute);
-        spnRoute.setOnItemSelectedListener(this);
+        orderInputHelper.buildRouteSelector();
 
         // Spinner for place selection
-        ArrayAdapter<String> placeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        placeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        for (String place: globals.places) {
-            placeAdapter.add(place);
-        }
-        Spinner spnPlace = (Spinner) findViewById(R.id.spn_place);
-        spnPlace.setAdapter(placeAdapter);
-        spnPlace.setSelection(globals.selectedPlace);
-        spnPlace.setOnItemSelectedListener(this);
-
+        orderInputHelper.buildPlaceSelector();
+        
         // Spinner for category selection
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -101,12 +86,6 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Log.d(TAG, String.format("onItemSelected: id=%x, position=%d", parent.getId(), position));
         switch (parent.getId()) {
-        case R.id.spn_route:
-            globals.selectedRoute = position;
-            break;
-        case R.id.spn_place:
-            globals.selectedPlace = position;
-            break;
         case R.id.spn_category:
             changeCategory(globals.categories.get(position));
             break;

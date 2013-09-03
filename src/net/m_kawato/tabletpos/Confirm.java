@@ -14,16 +14,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-public class Confirm extends Activity implements OnClickListener, AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, DialogInterface.OnDismissListener, OnEditorActionListener {
+public class Confirm extends Activity implements OnClickListener, AdapterView.OnItemClickListener, DialogInterface.OnDismissListener, OnEditorActionListener {
     private static final String TAG = "Confirm";
     private Globals globals;
     private int selectedPosition;
@@ -37,7 +35,8 @@ public class Confirm extends Activity implements OnClickListener, AdapterView.On
         this.globals = (Globals) this.getApplication();
         globals.orderItems.clear();
         globals.orderItemList.clear();
- 
+        OrderInputHelper orderInputHelper = new OrderInputHelper(this, globals);
+
         // Build ListView of order items
         ListView orderListView = (ListView) findViewById(R.id.list);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -62,26 +61,10 @@ public class Confirm extends Activity implements OnClickListener, AdapterView.On
         orderListView.setOnItemClickListener(this);
 
         // Spinner for route selection
-        ArrayAdapter<String> routeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        routeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        for (String route: globals.routes) {
-            routeAdapter.add(route);
-        }
-        Spinner spnRoute = (Spinner) findViewById(R.id.spn_route);
-        spnRoute.setAdapter(routeAdapter);
-        spnRoute.setSelection(globals.selectedRoute);
-        spnRoute.setOnItemSelectedListener(this);
+        orderInputHelper.buildRouteSelector();
 
         // Spinner for place selection
-        ArrayAdapter<String> placeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        placeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        for (String place: globals.places) {
-            placeAdapter.add(place);
-        }
-        Spinner spnPlace = (Spinner) findViewById(R.id.spn_place);
-        spnPlace.setAdapter(placeAdapter);
-        spnPlace.setSelection(globals.selectedPlace);
-        spnPlace.setOnItemSelectedListener(this);
+        orderInputHelper.buildPlaceSelector();
 
         // total amount, credit amount and cash amount
         updateTotalAmount();
@@ -105,24 +88,6 @@ public class Confirm extends Activity implements OnClickListener, AdapterView.On
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.confirm, menu);
         return true;
-    }
-
-    // Event handler for spinners
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Log.d(TAG, String.format("onItemSelected: id=%x, position=%d", parent.getId(), position));
-        switch (parent.getId()) {
-        case R.id.spn_route:
-            globals.selectedRoute = position;
-            break;
-        case R.id.spn_place:
-            globals.selectedPlace = position;
-            break;
-        }
-    }
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        Log.d(TAG, "onNothingSelected");
     }
 
     // Event handler for items of order item list
