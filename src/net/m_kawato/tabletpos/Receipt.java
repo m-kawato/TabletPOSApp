@@ -48,9 +48,13 @@ public class Receipt extends Activity implements OnClickListener {
         SimpleAdapter orderListAdapter = new SimpleAdapter(this, globals.orderItemList, R.layout.receipt_item, from, to);
         orderListView.setAdapter(orderListAdapter);        
         
-        // route and place
+        // date, route and place
         Log.d(TAG, String.format("onCreate: selectedRoute=%s, routes.size=%s",
                 globals.selectedRoute, globals.routes.size()));
+        TextView dateView = (TextView) findViewById(R.id.date);
+        String dateText = DateFormat.format("dd-MM-yyyy", Calendar.getInstance()).toString();
+        dateView.setText(dateText);
+
         TextView routeView = (TextView) findViewById(R.id.route);
         String routeCode = globals.routes.get(globals.selectedRoute);
         String routeName = globals.routeName.get(routeCode);

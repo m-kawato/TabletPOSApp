@@ -20,11 +20,8 @@
     <string name="export">Export</string>
     <string name="gototop">Enter New Order</string>
     <string name="route">Route</string>
-    <string name="route_label">Route:</string>
     <string name="place">Shop</string>
-    <string name="place_label">Shop:</string>
     <string name="product">Product</string>
-    <string name="product_label">Product:</string>
     <string name="unit_price">Unit Price</string>
     <string name="unit_price_box">Price/Box</string>
     <string name="quantity">Quantity\n(piece)</string>
@@ -35,6 +32,10 @@
     <string name="up">+</string>
     <string name="amount">Amount</string>
     <string name="total_price">Total Price</string>
+    <string name="date_label">Date:</string>
+    <string name="route_label">Route:</string>
+    <string name="place_label">Shop:</string>
+    <string name="product_label">Product:</string>
     <string name="total_amount_label">Total Amount:</string>
     <string name="credit_amount_label">Credit Amount:</string>
     <string name="cash_amount_label">Cash Amount:</string>
