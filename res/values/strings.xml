@@ -13,6 +13,8 @@
     <string name="title_dialog_credit_input">Credit Input</string>
     <string name="start">Enter Order</string>
     <string name="about">About</string>
+    <string name="loading_sheet_number">Loading Sheet Number</string>
+    <string name="enter">Enter</string>
     <string name="category">Category</string>
     <string name="order">Order</string>
     <string name="confirm">Confirm</string>
@@ -36,6 +38,7 @@
     <string name="route_label">Route:</string>
     <string name="place_label">Shop:</string>
     <string name="product_label">Product:</string>
+    <string name="loading_sheet_number_label">Loading Sheet Number:</string>
     <string name="total_amount_label">Total Amount:</string>
     <string name="credit_amount_label">Credit Amount:</string>
     <string name="cash_amount_label">Cash Amount:</string>

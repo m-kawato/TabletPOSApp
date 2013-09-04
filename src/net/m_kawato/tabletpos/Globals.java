@@ -6,15 +6,22 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.util.Log;
+import android.widget.Toast;
 
 public class Globals extends Application {
     private static final String TAG = "Globals";
+    private static final String SAVED_VALUES = "saved_values";
+    private static final String KEY_LOADING_SHEET_NUMBER = "LoadingSheetNumber";
     public static final String PRODUCTS_FILENAME = "products.csv";
     public static final String PLACES_FILENAME = "places.csv";
     public static final String SDCARD_DIRNAME = "TabletPOSApp";
     public static final String RECEIPT_FILENAME = "receipt.csv";
 
+    public String loadingSheetNumber;
     public List<Product> products;
     public List<String> categories;
     public List<String> routes; // list of routeCode
@@ -95,6 +102,25 @@ public class Globals extends Application {
         return this.places.get(routeCode).get(this.selectedPlace);
     }
 
+    public void loadLoadingSheetNumber() {
+        SharedPreferences preferences = getSharedPreferences(SAVED_VALUES, Context.MODE_PRIVATE);
+        String value = preferences.getString(KEY_LOADING_SHEET_NUMBER, null);
+        if (value == null) {
+            value = "0";
+        }
+        this.loadingSheetNumber = value;
+        Log.d(TAG, "loadLoadingSheetNumber: value = " + value);
+    }
+
+    public void setLoadingSheetNumber(String value) {
+        this.loadingSheetNumber = value;
+        SharedPreferences preferences = getSharedPreferences(SAVED_VALUES, Context.MODE_PRIVATE);
+        Editor editor = preferences.edit();
+        editor.putString(KEY_LOADING_SHEET_NUMBER, value);
+        editor.commit();
+        Toast.makeText(this, "Loading sheet number has been recorded.", Toast.LENGTH_LONG).show();
+    }
+    
     public void printRouteNames() {
         for (String routeCode: this.routes) {
             String routeName = this.routeName.get(routeCode);

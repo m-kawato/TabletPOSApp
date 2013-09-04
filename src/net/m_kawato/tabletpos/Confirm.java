@@ -60,6 +60,10 @@ public class Confirm extends Activity implements OnClickListener, AdapterView.On
         orderListView.setAdapter(this.orderListAdapter);        
         orderListView.setOnItemClickListener(this);
 
+        // Loading sheet number
+        TextView loadingSheetNumberView = (TextView) findViewById(R.id.loading_sheet_number);
+        loadingSheetNumberView.setText(globals.loadingSheetNumber);
+        
         // Spinner for route selection
         orderInputHelper.buildRouteSelector();
 
@@ -108,7 +112,7 @@ public class Confirm extends Activity implements OnClickListener, AdapterView.On
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         Log.d(TAG, "onEditorAction: actionId=" + actionId);
         if (actionId == EditorInfo.IME_ACTION_GO) {  
-            updateCreditAmount(); // search処理  
+            updateCreditAmount();
         }  
         return true;  
     }  

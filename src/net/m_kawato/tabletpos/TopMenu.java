@@ -31,6 +31,7 @@ public class TopMenu extends Activity implements OnClickListener {
         // Initialization
         globals = (Globals) this.getApplication();
         globals.initialize();
+        globals.loadLoadingSheetNumber();
         loadProductData();
         loadPlaceData();
         

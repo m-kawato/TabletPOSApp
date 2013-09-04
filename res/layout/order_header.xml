@@ -4,10 +4,40 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
+    <!-- loading sheet number -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+   		    android:text="@string/loading_sheet_number"
+   		    android:textAppearance="?android:attr/textAppearanceMedium" />
+	    <EditText
+	        android:id="@+id/loading_sheet_number"
+	        android:layout_width="120dp"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="7dp"
+            android:inputType="numberDecimal"
+            android:imeOptions="actionGo" />
+        <Button
+            android:id="@+id/btn_enter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/enter" />
+    </LinearLayout>
+
     <!-- route and place selection -->
     <TableLayout
     	android:layout_width="match_parent"
-   		android:layout_height="match_parent" >
+   		android:layout_height="match_parent"
+   		android:layout_marginTop="10dp" >
    		<TableRow>
    		    <TextView
    		        android:id="@+id/text_route"

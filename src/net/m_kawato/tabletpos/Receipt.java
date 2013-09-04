@@ -47,6 +47,10 @@ public class Receipt extends Activity implements OnClickListener {
         int[] to = {R.id.product_name, R.id.unit_price, R.id.quantity, R.id.unit_price_box, R.id.quantity_box, R.id.amount};
         SimpleAdapter orderListAdapter = new SimpleAdapter(this, globals.orderItemList, R.layout.receipt_item, from, to);
         orderListView.setAdapter(orderListAdapter);        
+
+        // Loading sheet number
+        TextView loadingSheetNumberView = (TextView) findViewById(R.id.loading_sheet_number);
+        loadingSheetNumberView.setText(globals.loadingSheetNumber);
         
         // date, route and place
         Log.d(TAG, String.format("onCreate: selectedRoute=%s, routes.size=%s",

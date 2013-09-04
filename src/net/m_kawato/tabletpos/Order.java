@@ -9,18 +9,23 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
-public class Order extends Activity implements OnClickListener, AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, DialogInterface.OnDismissListener {
+public class Order extends Activity implements OnClickListener, AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, DialogInterface.OnDismissListener, OnEditorActionListener {
     private static final String TAG = "Order";
     private Globals globals;
     private List<Product> productsInCategory;
@@ -53,6 +58,13 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
         productListView.setAdapter(this.productListAdapter);
         productListView.setOnItemClickListener(this);
         
+        // Loading sheet number
+        EditText loadingSheetNumberView = (EditText) findViewById(R.id.loading_sheet_number);
+        loadingSheetNumberView.setText(globals.loadingSheetNumber);
+        loadingSheetNumberView.setOnEditorActionListener(this);
+        Button btnEnter = (Button) findViewById(R.id.btn_enter);
+        btnEnter.setOnClickListener(this);
+
         // Spinner for route selection
         orderInputHelper.buildRouteSelector();
 
@@ -81,6 +93,16 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
         return true;
     }
 
+    // Event handler for TextEdit
+    @Override  
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        Log.d(TAG, "onEditorAction: actionId=" + actionId);
+        if (actionId == EditorInfo.IME_ACTION_GO) {  
+            updateLoadingSheetNumber();
+        }  
+        return true;  
+    }
+
     // Event handler for spinners
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -102,6 +124,9 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
         Intent i;
 
         switch (v.getId()) {
+        case R.id.btn_enter:
+            updateLoadingSheetNumber();
+            break;
         case R.id.btn_confirm:
             i = new Intent(this, Confirm.class);
             startActivity(i);
@@ -131,6 +156,17 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
         this.productListAdapter.notifyDataSetChanged();
     }
 
+    // Update loading sheet number
+    private void updateLoadingSheetNumber() {
+        Log.d(TAG, "updateLoadingSheetNumber");
+        EditText loadingSheetNumberView = (EditText) findViewById(R.id.loading_sheet_number);
+        String loadingSheetNumber = loadingSheetNumberView.getText().toString();
+        if (loadingSheetNumber.equals("")) {
+            return;
+        }
+        globals.setLoadingSheetNumber(loadingSheetNumber);
+    }
+    
     // Change selected category of products
     private void changeCategory(String category) {
         Log.d(TAG, String.format("changeCategory: %s", category));
