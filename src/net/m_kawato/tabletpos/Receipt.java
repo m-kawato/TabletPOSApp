@@ -126,36 +126,47 @@ public class Receipt extends Activity implements OnClickListener {
         String sdcardPath = Environment.getExternalStorageDirectory().getPath();
         String dirname = String.format("%s/%s", sdcardPath, Globals.SDCARD_DIRNAME);
         String filename = String.format("%s/%s", dirname, Globals.RECEIPT_FILENAME);
-        String timestamp = DateFormat.format("yyyy/MM/dd kk:mm:ss", Calendar.getInstance()).toString();
+        String timestamp = DateFormat.format("dd-MM-yyyy kk:mm", Calendar.getInstance()).toString();
         Log.d(TAG, String.format("exportReceipt: filename=%s, timestamp=%s", filename, timestamp));
 
-        StringBuffer buf = new StringBuffer();
         String routeCode = globals.routes.get(globals.selectedRoute);
         String routeName = globals.routeName.get(routeCode);
         String placeCode = globals.places.get(routeCode).get(globals.selectedPlace);
         String placeName = globals.placeName.get(placeCode);
-        
-        buf.append(String.format("%s,%s,%s,%s,%s,%s,%s",
-                timestamp, routeName, routeCode, placeName, placeCode,
-                globals.totalAmount.toString(),
-                globals.creditAmount.toString()));
-        for (Product item: globals.orderItems) {
-            buf.append(String.format(",%s,%d,%d",
-                    item.productName,
-                    item.productId,
-                    item.quantity + item.quantityBox * item.numPiecesInBox));
-        }
-        Log.d(TAG, String.format("exportReceipt: line=" + buf.toString()));
         
         PrintWriter writer = null;
         try {
             File dir = new File(dirname);
             if (! dir.exists()) {
                 dir.mkdirs();  
-            }  
+            }
+            File outfile = new File(filename);
+            String header = null;
+            if (! outfile.exists()) {
+                header = "Sale Date,Route Name,Route Code,RRP Name,RRP Code,Credit Amount,Product Name,Product Code,Quantity,Loading Sheet Number";
+            }
             FileOutputStream fout = new FileOutputStream(filename, true);
             writer = new PrintWriter(fout);
-            writer.println(buf.toString());
+            if (header != null) {
+                writer.println(header);
+            }
+
+            boolean firstItem = true;
+            for (Product item: globals.orderItems) {
+                String creditAmountText = null;
+                if (firstItem) {
+                    creditAmountText = globals.creditAmount.toString();
+                    firstItem = false;
+                } else {
+                    creditAmountText = "0";
+                }
+                writer.println(String.format("%s,%s,%s,%s,%s,%s,%s,%d,%d,%s",
+                        timestamp, routeName, routeCode, placeName, placeCode,
+                        creditAmountText, item.productName, item.productId,
+                        item.quantity + item.quantityBox * item.numPiecesInBox,
+                        globals.loadingSheetNumber));
+            }
+        
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("The receipt was successfully exported to\n" + filename);
             builder.setPositiveButton(android.R.string.ok, null);
