@@ -25,9 +25,11 @@ public class OrderInputHelper implements AdapterView.OnItemSelectedListener {
         Log.d(TAG, String.format("onItemSelected: id=%x, position=%d", parent.getId(), position));
         switch (parent.getId()) {
         case R.id.spn_route:
-            globals.selectedRoute = position;
-            globals.selectedPlace = 0;
-            updatePlaceSelector();
+            if (globals.selectedRoute != position) {
+                globals.selectedRoute = position;
+                globals.selectedPlace = 0;
+                updatePlaceSelector();
+            }
             break;
         case R.id.spn_place:
             globals.selectedPlace = position;
