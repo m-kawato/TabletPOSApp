@@ -1,8 +1,9 @@
 package net.m_kawato.tabletpos;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,9 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -67,18 +68,21 @@ public class TopMenu extends Activity implements OnClickListener {
     // load product data from product information file
     private void loadProductData() {
         Log.d(TAG, "loadProductData");
+        String sdcardPath = Environment.getExternalStorageDirectory().getPath();
+        String dirname = String.format("%s/%s", sdcardPath, Globals.SDCARD_DIRNAME);
+        String productsFilename = String.format("%s/%s", dirname, Globals.PRODUCTS_FILENAME);
         globals.products = new ArrayList<Product>();
         globals.categories = new ArrayList<String>();
-        AssetManager as = getResources().getAssets();
         List<String> lines = new ArrayList<String>();
         try {
-            InputStream is = as.open(Globals.PRODUCTS_FILENAME);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            File productsFile = new File(productsFilename);
+            FileInputStream fin = new FileInputStream(productsFile);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
             String line;
             while((line = reader.readLine()) != null){     
                 lines.add(line);    
             } 
-            is.close();
+            fin.close();
         } catch (IOException e) {
             Log.e(TAG, "Failed to open product information file");
         }
@@ -109,22 +113,25 @@ public class TopMenu extends Activity implements OnClickListener {
     // load route and place data from place information file
     private void loadPlaceData() {
         Log.d(TAG, "loadPlaceData");
+        String sdcardPath = Environment.getExternalStorageDirectory().getPath();
+        String dirname = String.format("%s/%s", sdcardPath, Globals.SDCARD_DIRNAME);
+        String placesFilename = String.format("%s/%s", dirname, Globals.PLACES_FILENAME);
         globals.routes = new ArrayList<String>(); 
         globals.places = new HashMap<String, List<String>>();
         globals.routeName = new HashMap<String, String>();
         globals.placeName = new HashMap<String, String>();
-        AssetManager as = getResources().getAssets();
         List<String> lines = new ArrayList<String>();
         try {
-            InputStream is = as.open(Globals.PLACES_FILENAME);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            File placesFile = new File(placesFilename);
+            FileInputStream fin = new FileInputStream(placesFile);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
             String line;
             while((line = reader.readLine()) != null){     
                 lines.add(line);    
             } 
-            is.close();
+            fin.close();
         } catch (IOException e) {
-            Log.e(TAG, "Failed to open product information file");
+            Log.e(TAG, "Failed to open place information file");
         }
 
         for(int i = 0; i < lines.size(); i++) {
