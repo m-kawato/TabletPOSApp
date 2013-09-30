@@ -125,7 +125,10 @@ public class Receipt extends Activity implements OnClickListener {
 
         String sdcardPath = Environment.getExternalStorageDirectory().getPath();
         String dirname = String.format("%s/%s", sdcardPath, Globals.SDCARD_DIRNAME);
-        String filename = String.format("%s/%s", dirname, Globals.RECEIPT_FILENAME);
+        String filename = String.format("%s/%s_%s.%s", dirname,
+                Globals.RECEIPT_PREFIX,
+                DateFormat.format("dd_MM_yyyy", Calendar.getInstance()).toString(),
+                Globals.RECEIPT_SUFFIX);
         String timestamp = DateFormat.format("dd-MM-yyyy kk:mm", Calendar.getInstance()).toString();
         Log.d(TAG, String.format("exportReceipt: filename=%s, timestamp=%s", filename, timestamp));
 

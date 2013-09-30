@@ -19,7 +19,8 @@ public class Globals extends Application {
     public static final String SDCARD_DIRNAME = "TabletPOSApp";
     public static final String PRODUCTS_FILENAME = "products.csv";
     public static final String PLACES_FILENAME = "places.csv";
-    public static final String RECEIPT_FILENAME = "receipt.csv";
+    public static final String RECEIPT_PREFIX = "receipt";
+    public static final String RECEIPT_SUFFIX = "xls";
 
     public String loadingSheetNumber;
     public List<Product> products;

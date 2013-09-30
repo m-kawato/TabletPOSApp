@@ -19,7 +19,7 @@
     <string name="order">Order</string>
     <string name="confirm">Confirm</string>
     <string name="receipt">Receipt</string>
-    <string name="export">Export</string>
+    <string name="export">Save to Excel</string>
     <string name="gototop">Enter New Order</string>
     <string name="route">Route</string>
     <string name="place">Shop</string>
