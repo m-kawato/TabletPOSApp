@@ -13,6 +13,8 @@ import java.util.List;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
@@ -84,7 +86,20 @@ public class TopMenu extends Activity implements OnClickListener {
             } 
             fin.close();
         } catch (IOException e) {
-            Log.e(TAG, "Failed to open product information file");
+            Log.e(TAG, "!! Failed to load product data");
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setCancelable(false);
+            alertDialogBuilder.setTitle("Fatal Error");
+            alertDialogBuilder.setMessage("Failed to load product data: \n" + productsFilename);
+            alertDialogBuilder.setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            TopMenu.this.finish();
+                        }
+                    });
+            alertDialogBuilder.create().show();
+            Log.d(TAG, "after alertDialog(product)");
         }
 
         for(int i = 0; i < lines.size(); i++) {
@@ -131,7 +146,20 @@ public class TopMenu extends Activity implements OnClickListener {
             } 
             fin.close();
         } catch (IOException e) {
-            Log.e(TAG, "Failed to open place information file");
+            Log.e(TAG, "Failed to load place data");
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setCancelable(false);
+            alertDialogBuilder.setTitle("Fatal Error");
+            alertDialogBuilder.setMessage("Failed to load place data: \n" + placesFilename);
+            alertDialogBuilder.setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            TopMenu.this.finish();
+                        }
+                    });
+            alertDialogBuilder.create().show();
+            Log.d(TAG, "after alertDialog(place)");
         }
 
         for(int i = 0; i < lines.size(); i++) {
