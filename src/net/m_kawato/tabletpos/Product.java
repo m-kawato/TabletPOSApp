@@ -12,32 +12,32 @@ public class Product {
     public int salesId;
     public String productName;
     public String category;
+    public int quantity; 
     public BigDecimal unitPrice;
     public BigDecimal unitPriceBox;
     public int numPiecesInBox;
-    public int quantity; 
-    public int quantityBox;
     public boolean confirmed = false;
 
-    public Product(Context context, int productId, String productName, String category, BigDecimal unitPrice, int quantity, BigDecimal unitPriceBox, int quantityBox, int numPiecesInBox) {
+    public Product(Context context, int productId, String productName, String category, int quantity, BigDecimal unitPrice, BigDecimal unitPriceBox, int numPiecesInBox) {
         this.context = context;
         this.productId = productId;
         this.productName = productName;
         this.category = category;
-        this.unitPrice = unitPrice;
         this.quantity = quantity;
+        this.unitPrice = unitPrice;
         this.unitPriceBox = unitPriceBox;
-        this.quantityBox = quantityBox;
         this.numPiecesInBox = numPiecesInBox;
     }
 
     public Product(Context context, int productId, String productName, String category, BigDecimal unitPrice, BigDecimal unitPriceBox, int numPiecesInBox) {
-        this(context, productId, productName, category, unitPrice, 0, unitPriceBox, 0, numPiecesInBox);
+        this(context, productId, productName, category, 0, unitPrice, unitPriceBox, numPiecesInBox);
     }
 
     public BigDecimal getAmount() {
-        BigDecimal amountPieces = this.unitPrice.multiply(new BigDecimal(this.quantity));
-        BigDecimal amountBoxes = this.unitPriceBox.multiply(new BigDecimal(this.numPiecesInBox)).multiply(new BigDecimal(this.quantityBox));
+        int numBoxes = this.quantity / this.numPiecesInBox;
+        int numPieces = this.quantity - numBoxes * this.numPiecesInBox;
+        BigDecimal amountPieces = this.unitPrice.multiply(new BigDecimal(numPieces));
+        BigDecimal amountBoxes = this.unitPriceBox.multiply(new BigDecimal(numBoxes * this.numPiecesInBox));
         return amountPieces.add(amountBoxes);
     }
 
@@ -46,10 +46,9 @@ public class Product {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("image", context.getResources().getIdentifier("product" + this.productId, "drawable", context.getPackageName()));
         map.put("product_name", this.productName);
-        map.put("unit_price", this.unitPrice.toString() + " " + currency);
         map.put("quantity", Integer.toString(this.quantity));
+        map.put("unit_price", this.unitPrice.toString() + " " + currency);
         map.put("unit_price_box", String.format("%s %s\n* %d pcs.", this.unitPriceBox.toString(), currency, this.numPiecesInBox));
-        map.put("quantity_box", Integer.toString(this.quantityBox));
         map.put("amount", this.getAmount().toString() + " " + currency);
         return map;
     }

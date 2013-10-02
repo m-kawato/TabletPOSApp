@@ -41,7 +41,6 @@ public class Globals extends Application {
         if (this.products != null) {
             for(Product p: this.products) {
                 p.quantity = 0;
-                p.quantityBox = 0;
             }
         }
         this.orderItems = new ArrayList<Product>();

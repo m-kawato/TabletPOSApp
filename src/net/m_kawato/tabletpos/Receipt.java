@@ -165,8 +165,7 @@ public class Receipt extends Activity implements OnClickListener {
                 }
                 writer.println(String.format("%s,%s,%s,%s,%s,%s,%s,%d,%d,%s",
                         timestamp, routeName, routeCode, placeName, placeCode,
-                        creditAmountText, item.productName, item.productId,
-                        item.quantity + item.quantityBox * item.numPiecesInBox,
+                        creditAmountText, item.productName, item.productId, item.quantity,
                         globals.loadingSheetNumber));
             }
         

@@ -46,7 +46,7 @@ public class Confirm extends Activity implements OnClickListener, AdapterView.On
         orderListView.addFooterView(footer);
 
         for(Product product: globals.products) {
-            if (product.quantity > 0 || product.quantityBox > 0) {
+            if (product.quantity > 0) {
                 globals.orderItems.add(product);
             }
         }        
@@ -54,9 +54,9 @@ public class Confirm extends Activity implements OnClickListener, AdapterView.On
             globals.orderItemList.add(order.toMap());
         }
         
-        String[] from = {"image", "product_name", "unit_price", "quantity", "unit_price_box", "quantity_box", "amount"};
-        int[] to = {R.id.image, R.id.product_name, R.id.unit_price, R.id.quantity, R.id.unit_price_box, R.id.quantity_box, R.id.amount};
-        this.orderListAdapter = new SimpleAdapter(this, globals.orderItemList, R.layout.order_item, from, to);
+        String[] from = {"image", "product_name", "unit_price", "unit_price_box", "quantity", "amount"};
+        int[] to = {R.id.image, R.id.product_name, R.id.unit_price, R.id.unit_price_box, R.id.quantity, R.id.amount};
+        this.orderListAdapter = new SimpleAdapter(this, globals.orderItemList, R.layout.confirm_item, from, to);
         orderListView.setAdapter(this.orderListAdapter);        
         orderListView.setOnItemClickListener(this);
 
