@@ -35,6 +35,7 @@ public class TopMenu extends Activity implements OnClickListener {
         globals = (Globals) this.getApplication();
         globals.initialize();
         globals.loadLoadingSheetNumber();
+        globals.loadTransactionId();
         loadProductData();
         loadPlaceData();
         
@@ -51,6 +52,8 @@ public class TopMenu extends Activity implements OnClickListener {
         Intent i;
         switch (v.getId()) {
             case R.id.btn_start:
+                // increment transactionId and go to Order page
+                globals.incrTransactionId();
                 i = new Intent(this, Order.class);
                 startActivity(i);
                 break;

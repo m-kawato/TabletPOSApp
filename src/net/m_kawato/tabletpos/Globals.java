@@ -16,13 +16,15 @@ public class Globals extends Application {
     private static final String TAG = "Globals";
     private static final String SAVED_VALUES = "saved_values";
     private static final String KEY_LOADING_SHEET_NUMBER = "LoadingSheetNumber";
+    private static final String KEY_TRANSACTION_ID = "TransactionId";  
     public static final String SDCARD_DIRNAME = "TabletPOSApp";
     public static final String PRODUCTS_FILENAME = "products.csv";
     public static final String PLACES_FILENAME = "places.csv";
     public static final String RECEIPT_PREFIX = "receipt";
     public static final String RECEIPT_SUFFIX = "xls";
-
+    
     public String loadingSheetNumber;
+    public long transactionId;
     public List<Product> products;
     public List<String> categories;
     public List<String> routes; // list of routeCode
@@ -104,10 +106,7 @@ public class Globals extends Application {
 
     public void loadLoadingSheetNumber() {
         SharedPreferences preferences = getSharedPreferences(SAVED_VALUES, Context.MODE_PRIVATE);
-        String value = preferences.getString(KEY_LOADING_SHEET_NUMBER, null);
-        if (value == null) {
-            value = "0";
-        }
+        String value = preferences.getString(KEY_LOADING_SHEET_NUMBER, "0");
         this.loadingSheetNumber = value;
         Log.d(TAG, "loadLoadingSheetNumber: value = " + value);
     }
@@ -120,7 +119,23 @@ public class Globals extends Application {
         editor.commit();
         Toast.makeText(this, "Loading sheet number has been recorded.", Toast.LENGTH_LONG).show();
     }
-    
+
+    public void loadTransactionId() {
+        SharedPreferences preferences = getSharedPreferences(SAVED_VALUES, Context.MODE_PRIVATE);
+        long value = preferences.getLong(KEY_TRANSACTION_ID, 0);
+        this.transactionId = value;
+        Log.d(TAG, "loadTransactionId: value = " + value);
+    }
+
+    public void incrTransactionId() {
+        this.transactionId++;
+        SharedPreferences preferences = getSharedPreferences(SAVED_VALUES, Context.MODE_PRIVATE);
+        Editor editor = preferences.edit();
+        editor.putLong(KEY_TRANSACTION_ID, this.transactionId);
+        editor.commit();
+        Log.d(TAG, "incrTransactionId: value = " + this.transactionId);
+    }
+
     public void printRouteNames() {
         for (String routeCode: this.routes) {
             String routeName = this.routeName.get(routeCode);

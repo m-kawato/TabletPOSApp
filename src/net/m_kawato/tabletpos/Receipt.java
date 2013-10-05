@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +36,9 @@ public class Receipt extends Activity implements OnClickListener {
 
         this.globals = (Globals) this.getApplication();
 
+        // Insert/update receipt to database
+        writeReceiptToDb();
+        
         // Build ListView for order list
         ListView orderListView = (ListView) findViewById(R.id.list);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -109,7 +113,9 @@ public class Receipt extends Activity implements OnClickListener {
             startActivity(i);
             break;
         case R.id.btn_gototop:
+            // reset order status and return to Order page
             globals.initialize();
+            globals.incrTransactionId();
             i = new Intent(this, Order.class);
             startActivity(i);
             break;
@@ -179,5 +185,43 @@ public class Receipt extends Activity implements OnClickListener {
         } finally {
             writer.close();
         }  
+    }
+
+    // Insert/update receipt to SQLite DB
+    private void writeReceiptToDb() {
+        Log.d(TAG, "writeReceiptToDb");
+        PosDbHelper dbHelper = new PosDbHelper(this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String routeCode = globals.routes.get(globals.selectedRoute);
+        String placeCode = globals.places.get(routeCode).get(globals.selectedPlace);
+
+        // delete the old order with the current transaction ID
+        String deleteOrder = "DELETE FROM orders WHERE transaction_id = ?";
+        db.execSQL(deleteOrder, new String[] {Long.toString(globals.transactionId)});
+        
+        // insert the latest order
+        String insertOrder = "INSERT INTO orders " +
+                " (transaction_id, loading_sheet_number, route, place, quantity, credit) " +
+                " VALUES (?, ?, ?, ?, ?, ?)";
+
+        boolean firstItem = true;
+        for (Product item: globals.orderItems) {
+            String creditAmountText = null;
+            if (firstItem) {
+                creditAmountText = globals.creditAmount.toString();
+                firstItem = false;
+            } else {
+                creditAmountText = "0";
+            }
+            db.execSQL(insertOrder, new String[] {
+                    Long.toString(globals.transactionId),
+                    globals.loadingSheetNumber,
+                    routeCode,
+                    placeCode,
+                    Integer.toString(item.quantity),
+                    creditAmountText});
+        }
+        Log.d(TAG, "writeReceiptToDb completed");
     }
 }

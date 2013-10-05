@@ -9,7 +9,6 @@ import android.content.Context;
 public class Product {
     private Context context;
     public int productId;
-    public int salesId;
     public String productName;
     public String category;
     public int quantity; 
