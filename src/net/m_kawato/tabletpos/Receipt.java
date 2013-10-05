@@ -47,8 +47,8 @@ public class Receipt extends Activity implements OnClickListener {
         orderListView.addHeaderView(header);
         orderListView.addFooterView(footer);
 
-        String[] from = {"product_name", "unit_price", "quantity", "unit_price_box", "quantity_box", "amount"};
-        int[] to = {R.id.product_name, R.id.unit_price, R.id.quantity, R.id.unit_price_box, R.id.quantity_box, R.id.amount};
+        String[] from = {"product_name", "unit_price", "unit_price_box", "quantity", "amount"};
+        int[] to = {R.id.product_name, R.id.unit_price, R.id.unit_price_box, R.id.quantity, R.id.amount};
         SimpleAdapter orderListAdapter = new SimpleAdapter(this, globals.orderItemList, R.layout.receipt_item, from, to);
         orderListView.setAdapter(orderListAdapter);        
 

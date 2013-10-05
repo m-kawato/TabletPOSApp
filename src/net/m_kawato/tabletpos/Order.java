@@ -45,8 +45,8 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
         OrderInputHelper orderInputHelper = new OrderInputHelper(this, globals);
 
         // Build ListView for products
-        String[] from = {"image", "product_name", "quantity", "unit_price", "unit_price_box", "quantity_box", "amount"};
-        int[] to = {R.id.image, R.id.product_name, R.id.quantity, R.id.unit_price, R.id.unit_price_box, R.id.quantity_box, R.id.amount};
+        String[] from = {"image", "product_name", "unit_price", "unit_price_box", "quantity", "amount"};
+        int[] to = {R.id.image, R.id.product_name, R.id.unit_price, R.id.unit_price_box, R.id.quantity, R.id.amount};
         this.productListAdapter = new SimpleAdapter(this, this.productList, R.layout.order_item, from, to);
 
         ListView productListView = (ListView) findViewById(R.id.list);
