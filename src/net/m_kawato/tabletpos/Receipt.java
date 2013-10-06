@@ -11,23 +11,29 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 public class Receipt extends Activity implements OnClickListener {
     private static final String TAG = "Receipt";
     private Globals globals;
-
+    private float density;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
@@ -35,23 +41,10 @@ public class Receipt extends Activity implements OnClickListener {
         setContentView(R.layout.activity_receipt);
 
         this.globals = (Globals) this.getApplication();
-
+        this.density = getResources().getDisplayMetrics().density;
         // Insert/update receipt to database
         writeReceiptToDb();
         
-        // Build ListView for order list
-        ListView orderListView = (ListView) findViewById(R.id.list);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View header = inflater.inflate(R.layout.receipt_header, null);
-        View footer = inflater.inflate(R.layout.receipt_footer, null);
-        orderListView.addHeaderView(header);
-        orderListView.addFooterView(footer);
-
-        String[] from = {"product_name", "unit_price", "unit_price_box", "quantity", "amount"};
-        int[] to = {R.id.product_name, R.id.unit_price, R.id.unit_price_box, R.id.quantity, R.id.amount};
-        SimpleAdapter orderListAdapter = new SimpleAdapter(this, globals.orderItemList, R.layout.receipt_item, from, to);
-        orderListView.setAdapter(orderListAdapter);        
-
         // Loading sheet number
         TextView loadingSheetNumberView = (TextView) findViewById(R.id.loading_sheet_number);
         loadingSheetNumberView.setText(globals.loadingSheetNumber);
@@ -72,6 +65,22 @@ public class Receipt extends Activity implements OnClickListener {
         String placeCode = globals.places.get(routeCode).get(globals.selectedPlace);
         String placeName = globals.placeName.get(placeCode);
         placeView.setText(String.format("%s (%s)", placeName, placeCode));
+
+        // Build table of current order list
+        buildOrderList();
+        /*
+        ListView orderListView = (ListView) findViewById(R.id.list);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View header = inflater.inflate(R.layout.receipt_header, null);
+        View footer = inflater.inflate(R.layout.receipt_footer, null);
+        orderListView.addHeaderView(header);
+        orderListView.addFooterView(footer);
+
+        String[] from = {"product_name", "unit_price", "unit_price_box", "quantity", "amount"};
+        int[] to = {R.id.product_name, R.id.unit_price, R.id.unit_price_box, R.id.quantity, R.id.amount};
+        SimpleAdapter orderListAdapter = new SimpleAdapter(this, globals.orderItemList, R.layout.receipt_item, from, to);
+        orderListView.setAdapter(orderListAdapter);        
+        */
 
         // total amount, credit amount and cash amount
         TextView totalAmountView = (TextView) findViewById(R.id.total_amount);
@@ -224,4 +233,32 @@ public class Receipt extends Activity implements OnClickListener {
         }
         Log.d(TAG, "writeReceiptToDb completed");
     }
+
+    // Build current order list
+    private void buildOrderList() {
+        LinearLayout placeHolder = (LinearLayout) findViewById(R.id.current_order);
+        LayoutInflater inflater = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        
+        for (Product item: globals.orderItems) {
+            LinearLayout incLayout = (LinearLayout) inflater.inflate(R.layout.receipt_item, null);
+
+            TextView productNameView = (TextView) incLayout.findViewById(R.id.product_name);
+            productNameView.setText(item.productName);
+
+            TextView unitPriceView = (TextView) incLayout.findViewById(R.id.unit_price);
+            unitPriceView.setText(item.unitPrice.toString());
+
+            TextView unitPriceBoxView = (TextView) incLayout.findViewById(R.id.unit_price_box);
+            unitPriceBoxView.setText(item.unitPriceBox.toString());
+
+            TextView quantityView = (TextView) incLayout.findViewById(R.id.quantity);
+            quantityView.setText(Integer.toString(item.quantity));
+
+            TextView amountView = (TextView) incLayout.findViewById(R.id.amount);
+            amountView.setText(item.getAmount().toString());
+
+            placeHolder.addView(incLayout);
+       }
+    }
+
 }
