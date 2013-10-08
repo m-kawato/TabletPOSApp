@@ -4,54 +4,29 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <!-- loading sheet number -->
-    <LinearLayout
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical" >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingRight="10dp"
-   		    android:text="@string/loading_sheet_number_label"
-   		    android:textAppearance="?android:attr/textAppearanceMedium" />
-	    <TextView
-	        android:id="@+id/loading_sheet_number"
-	        android:layout_width="120dp"
-	        android:layout_height="wrap_content"
-	        android:layout_marginLeft="7dp"
-	        android:textAppearance="?android:attr/textAppearanceMedium" />
-    </LinearLayout>    
+        android:layout_height="2dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/darker_gray" />
 
-    <!-- Date, route and place -->
     <TableLayout
     	android:layout_width="match_parent"
    		android:layout_height="wrap_content" >
-   		<TableRow>
-   		    <TextView
-   		        android:layout_width="wrap_content"
-   		        android:layout_height="wrap_content"
-   		        android:paddingRight="10dp"
-   		        android:text="@string/date_label"
-   		        android:textAppearance="?android:attr/textAppearanceMedium" />
-   		    <TextView
-   		        android:id="@+id/date"
-   		        android:layout_width="wrap_content"
-   		        android:layout_height="wrap_content"
-   		        android:textAppearance="?android:attr/textAppearanceMedium" />
-   		</TableRow>
       	<TableRow>
    		    <TextView
    		        android:layout_width="wrap_content"
    		        android:layout_height="wrap_content"
    		        android:paddingRight="10dp"
+   		        android:textColor="@android:color/black"
    		        android:text="@string/route_label"
    		        android:textAppearance="?android:attr/textAppearanceMedium" />
    		    <TextView
    		        android:id="@+id/route"
    		        android:layout_width="wrap_content"
    		        android:layout_height="wrap_content"
+   		        android:textColor="@android:color/black"
    		        android:textAppearance="?android:attr/textAppearanceMedium" />
       	</TableRow>
 
@@ -61,60 +36,19 @@
    		        android:layout_height="wrap_content"
    		        android:paddingRight="10dp"
    		        android:text="@string/place_label"
+   		        android:textColor="@android:color/black"
    		        android:textAppearance="?android:attr/textAppearanceMedium" />
    		    <TextView
    		        android:id="@+id/place"
    		        android:layout_width="wrap_content"
    		        android:layout_height="wrap_content"
+   		        android:textColor="@android:color/black"
    		        android:textAppearance="?android:attr/textAppearanceMedium" />
       	</TableRow>
     </TableLayout>
 
     <!-- Attribute labels -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingLeft="30dp"
-            android:text="@string/product"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <TextView
-            android:layout_width="110dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/unit_price"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <TextView
-            android:layout_width="110dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/unit_price_box"
-            android:textAppearance="?android:attr/textAppearanceSmall" />       
-
-        <TextView
-            android:layout_width="110dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/quantity"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <TextView
-            android:layout_width="110dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/amount"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-        
-    </LinearLayout>
+    <include layout="@layout/receipt_attribute_labels" />
     
     <View 
         android:layout_width="match_parent" 

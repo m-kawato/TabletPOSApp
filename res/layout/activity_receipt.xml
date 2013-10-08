@@ -80,113 +80,22 @@
         </TableLayout>
 
         <!-- Attribute labels -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingLeft="30dp"
-                android:text="@string/product"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <TextView
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/unit_price"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-            <TextView
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/unit_price_box"
-                android:textAppearance="?android:attr/textAppearanceSmall" />       
-            <TextView
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/quantity"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-            <TextView
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/amount"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-        </LinearLayout>
+        <include layout="@layout/receipt_attribute_labels" />
         
         <View 
             android:layout_width="match_parent" 
             android:layout_height="2dp"
             android:background="@android:color/darker_gray" />
     
-        <!-- Current order -->
+        <!-- Current order (place holder) -->
         <LinearLayout
             android:id="@+id/current_order"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
-        <View 
-            android:layout_width="match_parent" 
-            android:layout_height="2dp"
-            android:layout_marginBottom="0dp"
-            android:background="@android:color/darker_gray" />
-
         <!-- Total amount, credit amount and cash amount -->
-        <TableLayout
-    	    android:layout_width="match_parent"
-   		    android:layout_height="wrap_content"
-   		    android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp" >
-   		    <TableRow>
-       		    <TextView
-   		            android:layout_width="wrap_content"
-   		            android:layout_height="wrap_content"
-   		            android:text="@string/total_amount_label"
-   		            android:textAppearance="?android:attr/textAppearanceMedium" />
-   		        <TextView
-       		        android:id="@+id/total_amount"
-   	    	        android:layout_width="wrap_content"
-   		            android:layout_height="wrap_content"
-   		            android:layout_marginLeft="7dp"
-   		            android:textAppearance="?android:attr/textAppearanceMedium" />
-   	        </TableRow>
-
-            <TableRow>
-   		        <TextView
-       		        android:layout_width="wrap_content"
-   	    	        android:layout_height="wrap_content"
-   		            android:text="@string/credit_amount_label"
-   		            android:textAppearance="?android:attr/textAppearanceMedium" />
-   		        <TextView
-   		            android:id="@+id/credit_amount"
-   		            android:layout_width="wrap_content"
-   		            android:layout_height="wrap_content"
-   		            android:layout_marginLeft="7dp"
-   		            android:textAppearance="?android:attr/textAppearanceMedium" />
-   		    </TableRow>
-      	    <TableRow>
-  	            <TextView
-  	                android:layout_width="wrap_content"
-  	                android:layout_height="wrap_content"
-  	                android:text="@string/cash_amount_label"
-  	                android:textAppearance="?android:attr/textAppearanceMedium" />
-      	        <TextView
-  	                android:id="@+id/cash_amount"
-  	                android:layout_width="wrap_content"
-  	                android:layout_height="wrap_content"
-  	                android:layout_marginLeft="7dp"
-  	                android:textAppearance="?android:attr/textAppearanceMedium" /> 	        
-  	        </TableRow>
-        </TableLayout>
+        <include layout="@layout/receipt_footer" />
 
         <!-- "Confirm" and "Export" buttons -->
         <RelativeLayout
@@ -228,6 +137,14 @@
                 android:paddingRight="20dp"
                 android:drawablePadding="10dp"
                 android:text="@string/export" />
-        </RelativeLayout>        
+        </RelativeLayout>
+
+        <!-- Past orders (place holder) -->
+        <LinearLayout
+            android:id="@+id/past_orders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+        
     </LinearLayout>
 </ScrollView>

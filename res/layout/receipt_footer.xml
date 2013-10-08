@@ -2,102 +2,68 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
     android:orientation="vertical" >
-    
+
     <View 
         android:layout_width="match_parent" 
         android:layout_height="2dp"
-        android:layout_marginBottom="20dp"
         android:background="@android:color/darker_gray" />
-
-    <!-- Total amount, credit amount and cash amount -->
+    
     <TableLayout
-    	android:layout_width="match_parent"
-   		android:layout_height="wrap_content"
-   		android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp" >
-   		<TableRow>
-   		    <TextView
-   		        android:layout_width="wrap_content"
-   		        android:layout_height="wrap_content"
-   		        android:text="@string/total_amount_label"
-   		        android:textAppearance="?android:attr/textAppearanceMedium" />
-   		    <TextView
-   		        android:id="@+id/total_amount"
-   		        android:layout_width="wrap_content"
-   		        android:layout_height="wrap_content"
-   		        android:layout_marginLeft="7dp"
-   		        android:textAppearance="?android:attr/textAppearanceMedium" />
-   	    </TableRow>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
 
         <TableRow>
-   		    <TextView
-   		        android:layout_width="wrap_content"
-   		        android:layout_height="wrap_content"
-   		        android:text="@string/credit_amount_label"
-   		        android:textAppearance="?android:attr/textAppearanceMedium" />
-   		    <TextView
-   		        android:id="@+id/credit_amount"
-   		        android:layout_width="wrap_content"
-   		        android:layout_height="wrap_content"
-   		        android:layout_marginLeft="7dp"
-   		        android:textAppearance="?android:attr/textAppearanceMedium" />
-   		</TableRow>
-  	    <TableRow>
-  	        <TextView
-  	            android:layout_width="wrap_content"
-  	            android:layout_height="wrap_content"
-  	            android:text="@string/cash_amount_label"
-  	            android:textAppearance="?android:attr/textAppearanceMedium" />
-  	        <TextView
-  	            android:id="@+id/cash_amount"
-  	            android:layout_width="wrap_content"
-  	            android:layout_height="wrap_content"
-  	            android:layout_marginLeft="7dp"
-  	            android:textAppearance="?android:attr/textAppearanceMedium" /> 	        
-  	    </TableRow>
-   		</TableLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+   		        android:textColor="@android:color/black"
+                android:text="@string/total_amount_label"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <!-- "Confirm" and "Export" buttons -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp" >
+            <TextView
+                android:id="@+id/total_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7dp"
+   		        android:textColor="@android:color/black"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </TableRow>
 
-        <Button
-            android:id="@+id/btn_confirm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="20dp"
-            android:drawableLeft="@android:drawable/ic_media_previous"
-            android:paddingLeft="10dp"
-            android:paddingRight="20dp"
-            android:drawablePadding="10dp"
-            android:text="@string/confirm" />
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+   		        android:textColor="@android:color/black"
+                android:text="@string/credit_amount_label"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <Button
-            android:id="@+id/btn_gototop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:drawableLeft="@android:drawable/ic_menu_edit"
-            android:paddingLeft="10dp"
-            android:paddingRight="20dp"
-            android:drawablePadding="10dp"
-            android:text="@string/gototop" />
+            <TextView
+                android:id="@+id/credit_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7dp"
+   		        android:textColor="@android:color/black"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </TableRow>
 
-        <Button
-            android:id="@+id/btn_export"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:drawableLeft="@android:drawable/ic_menu_send"
-            android:paddingLeft="10dp"
-            android:paddingRight="20dp"
-            android:drawablePadding="10dp"
-            android:text="@string/export" />
-    </RelativeLayout>
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+   		        android:textColor="@android:color/black"
+                android:text="@string/cash_amount_label"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/cash_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7dp"
+   		        android:textColor="@android:color/black"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </TableRow>
+</TableLayout>
 </LinearLayout>
