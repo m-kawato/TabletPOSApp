@@ -2,9 +2,11 @@ package net.m_kawato.tabletpos;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -25,7 +27,9 @@ public class Globals extends Application {
     
     public String loadingSheetNumber;
     public long transactionId;
-    public List<Product> products;
+    public List<Product> products = new ArrayList<Product>();
+    @SuppressLint("UseSparseArrays")
+    private Map<Integer, Product> productMap = new HashMap<Integer, Product>(); // map[productId -> product]
     public List<String> categories;
     public List<String> routes; // list of routeCode
     public Map<String, List<String>> places; // Map[routeCode -> list of placeCode]
@@ -57,6 +61,16 @@ public class Globals extends Application {
         if (! this.categories.contains(category)) {
             this.categories.add(category);
         }
+    }
+
+    public void addProduct(Product product) {
+        Log.d(TAG, "addProduct: productId = " + product.productId);
+        this.products.add(product);
+        this.productMap.put(product.productId, product);
+    }
+
+    public Product getProduct(int productId) {
+        return this.productMap.get(productId);
     }
 
     public void addPlace(String routeCode, String placeCode) {

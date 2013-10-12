@@ -40,15 +40,28 @@ public class Product {
         return amountPieces.add(amountBoxes);
     }
 
+    public String getFormattedUnitPrice() {
+        return this.unitPrice.toString() + " " + context.getString(R.string.currency);
+    }
+
+    public String getFormattedUnitPriceBox() {
+        return String.format("%s %s\n* %d pcs.",
+                this.unitPriceBox.toString(),
+                context.getString(R.string.currency),
+                this.numPiecesInBox);
+    }
+    
+    public String getFormattedAmount() {
+        return this.getAmount().toString() + " " + context.getString(R.string.currency);
+    }
     public Map<String, Object> toMap() {
-        String currency = context.getString(R.string.currency);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("image", context.getResources().getIdentifier("product" + this.productId, "drawable", context.getPackageName()));
         map.put("product_name", this.productName);
         map.put("quantity", Integer.toString(this.quantity));
-        map.put("unit_price", this.unitPrice.toString() + " " + currency);
-        map.put("unit_price_box", String.format("%s %s\n* %d pcs.", this.unitPriceBox.toString(), currency, this.numPiecesInBox));
-        map.put("amount", this.getAmount().toString() + " " + currency);
+        map.put("unit_price", getFormattedUnitPrice());
+        map.put("unit_price_box", getFormattedUnitPriceBox());
+        map.put("amount", getFormattedAmount());
         return map;
     }
 }

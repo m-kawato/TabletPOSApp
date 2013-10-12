@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,6 +15,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -195,8 +198,8 @@ public class Receipt extends Activity implements OnClickListener {
         
         // insert the latest order
         String insertOrder = "INSERT INTO orders " +
-                " (transaction_id, loading_sheet_number, route, place, quantity, credit) " +
-                " VALUES (?, ?, ?, ?, ?, ?)";
+                " (transaction_id, loading_sheet_number, route, place, product_id, quantity, credit) " +
+                " VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         boolean firstItem = true;
         for (Product item: globals.orderItems) {
@@ -212,6 +215,7 @@ public class Receipt extends Activity implements OnClickListener {
                     globals.loadingSheetNumber,
                     routeCode,
                     placeCode,
+                    Integer.toString(item.productId),
                     Integer.toString(item.quantity),
                     creditAmountText});
         }
@@ -239,78 +243,118 @@ public class Receipt extends Activity implements OnClickListener {
             productNameView.setText(item.productName);
 
             TextView unitPriceView = (TextView) receiptItem.findViewById(R.id.unit_price);
-            unitPriceView.setText(item.unitPrice.toString());
+            unitPriceView.setText(item.getFormattedUnitPrice());
 
             TextView unitPriceBoxView = (TextView) receiptItem.findViewById(R.id.unit_price_box);
-            unitPriceBoxView.setText(item.unitPriceBox.toString());
+            unitPriceBoxView.setText(item.getFormattedUnitPriceBox());
 
             TextView quantityView = (TextView) receiptItem.findViewById(R.id.quantity);
             quantityView.setText(Integer.toString(item.quantity));
 
             TextView amountView = (TextView) receiptItem.findViewById(R.id.amount);
-            amountView.setText(item.getAmount().toString());
+            amountView.setText(item.getFormattedAmount());
 
        }
     }
 
     // Build past order list
     private void buildPastOrderList() {
+        PosDbHelper dbHelper = new PosDbHelper(this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        // Read transaction DB and build map: transactionId -> transaction  
+        Cursor c = db.rawQuery(
+                "SELECT transaction_id, route, place, product_id, quantity, credit "
+                + "FROM orders "
+                + "WHERE transaction_id != ? AND loading_sheet_number = ? "
+                + "ORDER BY product_id ASC",
+                new String[] {Long.toString(globals.transactionId), globals.loadingSheetNumber});
+        c.moveToFirst();
+
+        Map<Long, Transaction> transactionMap = new HashMap<Long, Transaction>();
+        for (int i = 0; i < c.getCount(); i++) {
+            long transactionId = c.getLong(0);
+            String routeCode = c.getString(1);
+            String placeCode = c.getString(2);
+            int productId = c.getInt(3);
+            int quantity = c.getInt(4);
+            BigDecimal creditAmount = new BigDecimal(c.getString(5));
+            OrderItem orderItem = new OrderItem(this, globals.getProduct(productId), quantity);
+            Log.d(TAG, String.format("buildPastOrderList: productId=%d, orderItem=%s",
+                    productId, orderItem.toString()));
+            Transaction transaction = transactionMap.get(transactionId);
+            if (transaction == null) {
+                transaction = new Transaction(transactionId, routeCode, placeCode, creditAmount);
+                transactionMap.put(transactionId, transaction);
+            } else if (transaction.creditAmount.compareTo(creditAmount) < 0) {
+                transaction.creditAmount = creditAmount;
+            }
+            transaction.addOrderItem(orderItem);
+            c.moveToNext();
+        }
+        c.close();
+
+        // Build view for past orders
         LinearLayout placeHolder = (LinearLayout) findViewById(R.id.past_orders);
         LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        for(Transaction transaction: transactionMap.values()) {
+            // header (route and place)
+            LinearLayout receiptHeader = (LinearLayout) inflater.inflate(R.layout.receipt_header, null);
+            placeHolder.addView(receiptHeader);
 
-        // header (route and place)
-        LinearLayout receiptHeader = (LinearLayout) inflater.inflate(R.layout.receipt_header, null);
-        placeHolder.addView(receiptHeader);
+            String routeName = globals.routeName.get(transaction.routeCode);
+            TextView routeView = (TextView) receiptHeader.findViewById(R.id.route);
+            routeView.setText(String.format("%s (%s)", routeName, transaction.routeCode));
 
-        TextView routeView = (TextView) receiptHeader.findViewById(R.id.route);
-        routeView.setText("dummy route");
+            String placeName = globals.placeName.get(transaction.placeCode);
+            TextView placeView = (TextView) receiptHeader.findViewById(R.id.place);
+            placeView.setText(String.format("%s (%s)", placeName, transaction.placeCode));
 
-        TextView placeView = (TextView) receiptHeader.findViewById(R.id.place);
-        placeView.setText("dummy shop");
+            // order list
+            boolean firstItem = true;
+            for (OrderItem orderItem: transaction.orderItems) {
+                Product p = orderItem.product;
+                Log.d(TAG, "buildPastOrderList: p = " + p);
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    View itemBorderLine = inflater.inflate(R.layout.item_separator, new FrameLayout(this));
+                    placeHolder.addView(itemBorderLine);
+                }
 
-        // order list
-        boolean firstItem = true;
-        for (Product item: globals.orderItems) {
-            if (firstItem) {
-                firstItem = false;
-            } else {
-                View itemBorderLine = inflater.inflate(R.layout.item_separator, new FrameLayout(this));
-                placeHolder.addView(itemBorderLine);
+                LinearLayout receiptItem = (LinearLayout) inflater.inflate(R.layout.receipt_item, null);
+                placeHolder.addView(receiptItem);
+
+                TextView productNameView = (TextView) receiptItem.findViewById(R.id.product_name);
+                productNameView.setText(p.productName);
+
+                TextView unitPriceView = (TextView) receiptItem.findViewById(R.id.unit_price);
+                unitPriceView.setText(p.getFormattedUnitPrice());
+
+                TextView unitPriceBoxView = (TextView) receiptItem.findViewById(R.id.unit_price_box);
+                unitPriceBoxView.setText(p.getFormattedUnitPriceBox());
+
+                TextView quantityView = (TextView) receiptItem.findViewById(R.id.quantity);
+                quantityView.setText(Integer.toString(orderItem.quantity));
+
+                TextView amountView = (TextView) receiptItem.findViewById(R.id.amount);
+                amountView.setText(orderItem.getFormattedAmount());
             }
 
-            LinearLayout receiptItem = (LinearLayout) inflater.inflate(R.layout.receipt_item, null);
-            placeHolder.addView(receiptItem);
+            // footer (total amount, credit amount and cash amount)
+           
+            LinearLayout receiptFooter = (LinearLayout) inflater.inflate(R.layout.receipt_footer, null);
+            placeHolder.addView(receiptFooter);
 
-            TextView productNameView = (TextView) receiptItem.findViewById(R.id.product_name);
-            productNameView.setText(item.productName);
+            TextView totalAmountView = (TextView) receiptFooter.findViewById(R.id.total_amount);
+            totalAmountView.setText(transaction.getTotalAmount().toString() + " " + getString(R.string.currency));
 
-            TextView unitPriceView = (TextView) receiptItem.findViewById(R.id.unit_price);
-            unitPriceView.setText(item.unitPrice.toString());
+            TextView creditAmountView = (TextView) receiptFooter.findViewById(R.id.credit_amount);
+            creditAmountView.setText(transaction.getCreditAmount().toString() + " " + getString(R.string.currency));
 
-            TextView unitPriceBoxView = (TextView) receiptItem.findViewById(R.id.unit_price_box);
-            unitPriceBoxView.setText(item.unitPriceBox.toString());
-
-            TextView quantityView = (TextView) receiptItem.findViewById(R.id.quantity);
-            quantityView.setText(Integer.toString(item.quantity));
-
-            TextView amountView = (TextView) receiptItem.findViewById(R.id.amount);
-            amountView.setText(item.getAmount().toString());
+            TextView cashAmountView = (TextView) receiptFooter.findViewById(R.id.cash_amount);
+            cashAmountView.setText(transaction.getCashAmount().toString() + " " + getString(R.string.currency));
         }
-
-        // footer (total amount, credit amount and cash amount)
-       
-        LinearLayout receiptFooter = (LinearLayout) inflater.inflate(R.layout.receipt_footer, null);
-        placeHolder.addView(receiptFooter);
-
-        TextView totalAmountView = (TextView) receiptFooter.findViewById(R.id.total_amount);
-        totalAmountView.setText(globals.totalAmount.toString() + " " + getString(R.string.currency));
-
-        TextView creditAmountView = (TextView) receiptFooter.findViewById(R.id.credit_amount);
-        creditAmountView.setText(globals.creditAmount.toString() + " " + getString(R.string.currency));
-
-        BigDecimal cashAmount = globals.totalAmount.subtract(globals.creditAmount);
-        TextView cashAmountView = (TextView) receiptFooter.findViewById(R.id.cash_amount);
-        cashAmountView.setText(cashAmount.toString() + " " + getString(R.string.currency));
     
     }
 }

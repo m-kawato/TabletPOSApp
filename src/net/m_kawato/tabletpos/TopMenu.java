@@ -76,7 +76,7 @@ public class TopMenu extends Activity implements OnClickListener {
         String sdcardPath = Environment.getExternalStorageDirectory().getPath();
         String dirname = String.format("%s/%s", sdcardPath, Globals.SDCARD_DIRNAME);
         String productsFilename = String.format("%s/%s", dirname, Globals.PRODUCTS_FILENAME);
-        globals.products = new ArrayList<Product>();
+//        globals.products = new ArrayList<Product>();
         globals.categories = new ArrayList<String>();
         List<String> lines = new ArrayList<String>();
         try {
@@ -123,7 +123,7 @@ public class TopMenu extends Activity implements OnClickListener {
                 "productId=%d, category=%s, productName=%s, unitPrice=%f, numPircesInBox=%d, unitPriceBox=%f", 
                 productId, category, productName, unitPrice, numPiecesInBox, unitPriceBox));
             Product p = new Product(this, productId, productName, category, unitPrice, unitPriceBox, numPiecesInBox);
-            globals.products.add(p);
+            globals.addProduct(p);
             globals.addCategory(category);
         }
     }
