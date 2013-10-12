@@ -35,26 +35,19 @@ public class Globals extends Application {
     public Map<String, List<String>> places; // Map[routeCode -> list of placeCode]
     public Map<String, String> routeName; // Map[routeCode -> routeName]
     public Map<String, String> placeName; // Map[placeCode -> placeName]
-    
-    public List<Product> orderItems;
-    public List<Map<String, Object>> orderItemList;
+
+    public Transaction transaction;
     public int selectedRoute;
     public int selectedPlace;
-    public BigDecimal totalAmount;
-    public BigDecimal creditAmount;
 
     public void initialize() {
         if (this.products != null) {
             for(Product p: this.products) {
-                p.quantity = 0;
+                p.orderItem = null;
             }
         }
-        this.orderItems = new ArrayList<Product>();
-        this.orderItemList = new ArrayList<Map<String, Object>>();
         this.selectedRoute = 0;
         this.selectedPlace = 0;
-        this.totalAmount = new BigDecimal(0);
-        this.creditAmount = new BigDecimal(0);
     }
     
     public void addCategory(String category) {
@@ -143,6 +136,7 @@ public class Globals extends Application {
 
     public void incrTransactionId() {
         this.transactionId++;
+        this.transaction = new Transaction(this, transactionId, null, null, new BigDecimal(0));
         SharedPreferences preferences = getSharedPreferences(SAVED_VALUES, Context.MODE_PRIVATE);
         Editor editor = preferences.edit();
         editor.putLong(KEY_TRANSACTION_ID, this.transactionId);

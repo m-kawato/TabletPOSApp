@@ -68,14 +68,13 @@ public class Receipt extends Activity implements OnClickListener {
         
         // total amount, credit amount and cash amount
         TextView totalAmountView = (TextView) findViewById(R.id.total_amount);
-        totalAmountView.setText(globals.totalAmount.toString() + " " + getString(R.string.currency));
+        totalAmountView.setText(globals.transaction.getFormattedTotalAmount());
 
         TextView creditAmountView = (TextView) findViewById(R.id.credit_amount);
-        creditAmountView.setText(globals.creditAmount.toString() + " " + getString(R.string.currency));
+        creditAmountView.setText(globals.transaction.getFormattedCreditAmount());
 
-        BigDecimal cashAmount = globals.totalAmount.subtract(globals.creditAmount);
         TextView cashAmountView = (TextView) findViewById(R.id.cash_amount);
-        cashAmountView.setText(cashAmount.toString() + " " + getString(R.string.currency));
+        cashAmountView.setText(globals.transaction.getFormattedCashAmount());
         
         // "Confirm" button
         Button btnConfirm = (Button) findViewById(R.id.btn_confirm);
@@ -157,17 +156,17 @@ public class Receipt extends Activity implements OnClickListener {
             }
 
             boolean firstItem = true;
-            for (Product item: globals.orderItems) {
+            for (OrderItem orderItem: globals.transaction.orderItems) {
                 String creditAmountText = null;
                 if (firstItem) {
-                    creditAmountText = globals.creditAmount.toString();
+                    creditAmountText = globals.transaction.creditAmount.toString();
                     firstItem = false;
                 } else {
                     creditAmountText = "0";
                 }
                 writer.println(String.format("%s,%s,%s,%s,%s,%s,%s,%d,%d,%s",
                         timestamp, routeName, routeCode, placeName, placeCode,
-                        creditAmountText, item.productName, item.productId, item.quantity,
+                        creditAmountText, orderItem.product.productName, orderItem.product.productId, orderItem.quantity,
                         globals.loadingSheetNumber));
             }
         
@@ -202,10 +201,10 @@ public class Receipt extends Activity implements OnClickListener {
                 " VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         boolean firstItem = true;
-        for (Product item: globals.orderItems) {
+        for (OrderItem orderItem: globals.transaction.orderItems) {
             String creditAmountText = null;
             if (firstItem) {
-                creditAmountText = globals.creditAmount.toString();
+                creditAmountText = globals.transaction.creditAmount.toString();
                 firstItem = false;
             } else {
                 creditAmountText = "0";
@@ -215,8 +214,8 @@ public class Receipt extends Activity implements OnClickListener {
                     globals.loadingSheetNumber,
                     routeCode,
                     placeCode,
-                    Integer.toString(item.productId),
-                    Integer.toString(item.quantity),
+                    Integer.toString(orderItem.product.productId),
+                    Integer.toString(orderItem.quantity),
                     creditAmountText});
         }
         Log.d(TAG, "writeReceiptToDb completed");
@@ -228,7 +227,7 @@ public class Receipt extends Activity implements OnClickListener {
         LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         boolean firstItem = true;
-        for (Product item: globals.orderItems) {
+        for (OrderItem orderItem: globals.transaction.orderItems) {
             if (firstItem) {
                 firstItem = false;
             } else {
@@ -240,19 +239,19 @@ public class Receipt extends Activity implements OnClickListener {
             placeHolder.addView(receiptItem);
 
             TextView productNameView = (TextView) receiptItem.findViewById(R.id.product_name);
-            productNameView.setText(item.productName);
+            productNameView.setText(orderItem.product.productName);
 
             TextView unitPriceView = (TextView) receiptItem.findViewById(R.id.unit_price);
-            unitPriceView.setText(item.getFormattedUnitPrice());
+            unitPriceView.setText(orderItem.product.getFormattedUnitPrice());
 
             TextView unitPriceBoxView = (TextView) receiptItem.findViewById(R.id.unit_price_box);
-            unitPriceBoxView.setText(item.getFormattedUnitPriceBox());
+            unitPriceBoxView.setText(orderItem.product.getFormattedUnitPriceBox());
 
             TextView quantityView = (TextView) receiptItem.findViewById(R.id.quantity);
-            quantityView.setText(Integer.toString(item.quantity));
+            quantityView.setText(Integer.toString(orderItem.quantity));
 
             TextView amountView = (TextView) receiptItem.findViewById(R.id.amount);
-            amountView.setText(item.getFormattedAmount());
+            amountView.setText(orderItem.getFormattedAmount());
 
        }
     }
@@ -284,7 +283,7 @@ public class Receipt extends Activity implements OnClickListener {
                     productId, orderItem.toString()));
             Transaction transaction = transactionMap.get(transactionId);
             if (transaction == null) {
-                transaction = new Transaction(transactionId, routeCode, placeCode, creditAmount);
+                transaction = new Transaction(this, transactionId, routeCode, placeCode, creditAmount);
                 transactionMap.put(transactionId, transaction);
             } else if (transaction.creditAmount.compareTo(creditAmount) < 0) {
                 transaction.creditAmount = creditAmount;
@@ -347,13 +346,13 @@ public class Receipt extends Activity implements OnClickListener {
             placeHolder.addView(receiptFooter);
 
             TextView totalAmountView = (TextView) receiptFooter.findViewById(R.id.total_amount);
-            totalAmountView.setText(transaction.getTotalAmount().toString() + " " + getString(R.string.currency));
+            totalAmountView.setText(transaction.getFormattedTotalAmount());
 
             TextView creditAmountView = (TextView) receiptFooter.findViewById(R.id.credit_amount);
-            creditAmountView.setText(transaction.getCreditAmount().toString() + " " + getString(R.string.currency));
+            creditAmountView.setText(transaction.getFormattedCreditAmount());
 
             TextView cashAmountView = (TextView) receiptFooter.findViewById(R.id.cash_amount);
-            cashAmountView.setText(transaction.getCashAmount().toString() + " " + getString(R.string.currency));
+            cashAmountView.setText(transaction.getFormattedCashAmount());
         }
     
     }

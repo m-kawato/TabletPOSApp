@@ -28,7 +28,7 @@ import android.widget.TextView.OnEditorActionListener;
 public class Order extends Activity implements OnClickListener, AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, DialogInterface.OnDismissListener, OnEditorActionListener {
     private static final String TAG = "Order";
     private Globals globals;
-    private List<Product> productsInCategory;
+    private List<Product> productsInCategory; // products in the selected category
     private List<Map<String, Object>> productList;
     private int selectedPosition;
     private SimpleAdapter productListAdapter;
@@ -152,7 +152,10 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
     public void onDismiss(DialogInterface dialog) {
         Log.d(TAG, "onDismiss");
         Product product = this.productsInCategory.get(this.selectedPosition);
-        this.productList.set(this.selectedPosition, product.toMap());
+        if (product.orderItem != null) {
+            globals.transaction.addOrderItem(product.orderItem);
+        }
+        this.productList.set(this.selectedPosition, product.orderItem.toMap());
         this.productListAdapter.notifyDataSetChanged();
     }
 
@@ -172,13 +175,17 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
         Log.d(TAG, String.format("changeCategory: %s", category));
         this.productsInCategory.clear();
         this.productList.clear();        
-        Log.d(TAG, String.format("changeCategory: productLise.size = %d", this.productList.size()));
+        Log.d(TAG, String.format("changeCategory: productList.size = %d", this.productList.size()));
         for(Product product: globals.products) {
             if (! product.category.equals(category)) {
                 continue;
             }
             this.productsInCategory.add(product);
-            this.productList.add(product.toMap());
+            if (product.orderItem == null) {
+                this.productList.add(product.getDefaultMap());
+            } else {
+                this.productList.add(product.orderItem.toMap());
+            }
         }
         this.productListAdapter.notifyDataSetChanged();
     }

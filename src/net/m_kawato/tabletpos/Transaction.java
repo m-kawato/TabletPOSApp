@@ -4,14 +4,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
+
 public class Transaction {
+    private Context context;
     public long transactionId;
     public String routeCode;
     public String placeCode;
     public BigDecimal creditAmount;
     public List<OrderItem> orderItems = new ArrayList<OrderItem>();
 
-    public Transaction(long transactionId, String routeCode, String placeCode, BigDecimal creditAmount) {
+    public Transaction(Context context, long transactionId, String routeCode, String placeCode, BigDecimal creditAmount) {
+        this.context = context;
         this.transactionId = transactionId;
         this.routeCode = routeCode;
         this.placeCode = placeCode;
@@ -19,7 +23,9 @@ public class Transaction {
     }
 
     public void addOrderItem(OrderItem orderItem) {
-        this.orderItems.add(orderItem);
+        if (! this.orderItems.contains(orderItem)) {
+            this.orderItems.add(orderItem);
+        }
     }
 
     public BigDecimal getTotalAmount() {
@@ -30,11 +36,24 @@ public class Transaction {
         return totalAmount;
     }
 
+    public String getFormattedTotalAmount() {
+        return getTotalAmount().toString() + " " + context.getString(R.string.currency);
+    }
+
     public BigDecimal getCashAmount() {
         return getTotalAmount().subtract(this.creditAmount);
     }
 
+    public String getFormattedCashAmount() {
+        return getCashAmount().toString() + " " + context.getString(R.string.currency);
+    }
+
     public BigDecimal getCreditAmount() {
         return this.creditAmount;
+    }
+
+    public String getFormattedCreditAmount() {
+        return this.creditAmount.toString() + " " + context.getString(R.string.currency);
+        
     }
 }

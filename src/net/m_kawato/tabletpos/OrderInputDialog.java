@@ -13,14 +13,20 @@ import android.view.View;
 import android.view.WindowManager.LayoutParams;
 
 public class OrderInputDialog extends Dialog implements View.OnClickListener {
+    private Context context;
     private final String TAG = "OrderInputDialog";
     private Product product;
     private int quantity;
 
     public OrderInputDialog(Context context, Product product) {
         super(context);
-        this.product= product;
-        this.quantity = product.quantity;
+        this.context = context;
+        this.product = product;
+        if (product.orderItem == null) {
+            this.quantity = 0;
+        } else {
+            this.quantity = product.orderItem.quantity;
+        }
     }
         
     protected void onCreate(Bundle savedInstanceState){
@@ -39,7 +45,7 @@ public class OrderInputDialog extends Dialog implements View.OnClickListener {
         productNameView.setText(this.product.productName);
 
         EditText quantityView = (EditText) findViewById(R.id.quantity);
-        quantityView.setText(Integer.toString(this.product.quantity));
+        quantityView.setText(Integer.toString(this.quantity));
         quantityView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,int after) {
@@ -71,7 +77,11 @@ public class OrderInputDialog extends Dialog implements View.OnClickListener {
     
     private void saveOrder() {
         Log.d(TAG, "saveOrder");
-        this.product.quantity = this.quantity;
+        if (this.product.orderItem == null) {
+            this.product.orderItem = new OrderItem(this.context, this.product, this.quantity);
+        } else {
+            this.product.orderItem.quantity = this.quantity;
+        }
     }
 
     @Override
