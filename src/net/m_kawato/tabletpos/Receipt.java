@@ -186,7 +186,7 @@ public class Receipt extends Activity implements OnClickListener {
     private void writeReceiptToDb() {
         Log.d(TAG, "writeReceiptToDb");
         PosDbHelper dbHelper = new PosDbHelper(this);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         String routeCode = globals.routes.get(globals.selectedRoute);
         String placeCode = globals.places.get(routeCode).get(globals.selectedPlace);

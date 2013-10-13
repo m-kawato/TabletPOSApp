@@ -11,6 +11,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -124,6 +125,13 @@ public class Globals extends Application {
         Editor editor = preferences.edit();
         editor.putString(KEY_LOADING_SHEET_NUMBER, value);
         editor.commit();
+
+        // delete existing records from order table in SQLite DB
+        PosDbHelper dbHelper = new PosDbHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String deleteOrder = "DELETE FROM orders";
+        db.execSQL(deleteOrder);
+
         Toast.makeText(this, "Loading sheet number has been recorded.", Toast.LENGTH_LONG).show();
     }
 
@@ -141,7 +149,6 @@ public class Globals extends Application {
         Editor editor = preferences.edit();
         editor.putLong(KEY_TRANSACTION_ID, this.transactionId);
         editor.commit();
-        Log.d(TAG, "incrTransactionId: value = " + this.transactionId);
     }
 
     public void printRouteNames() {
