@@ -16,6 +16,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -135,6 +137,18 @@ public class TopMenu extends Activity implements OnClickListener {
             globals.addProduct(p);
             globals.addCategory(category);
         }
+
+        // load loading states from SQLite3 database
+        PosDbHelper dbHelper = new PosDbHelper(this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT product_id FROM loading WHERE loaded = 1", null);
+        c.moveToFirst();
+        for (int i = 0; i < c.getCount(); i++) {
+            int productId = c.getInt(0);
+            globals.getProduct(productId).loaded = true;
+            c.moveToNext();
+        }
+        c.close();
     }
 
     // load route and place data from place information file

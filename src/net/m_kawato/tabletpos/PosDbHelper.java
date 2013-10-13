@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class PosDbHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "pos_db";
-    private static final int DB_VERSION = 3;
+    private static final int DB_VERSION = 4;
 
     private static final String CREATE_TABLE_ORDERS = "CREATE TABLE orders ( "
     + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -18,6 +18,11 @@ public class PosDbHelper extends SQLiteOpenHelper {
     + "quantity INTEGER, "
     + "credit INTEGER )";
  
+    private static final String CREATE_TABLE_LOADING =
+            "CREATE TABLE loading ( "
+            + "product_id INTEGER, "
+            + "loaded INTEGER )";
+
     public PosDbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -25,10 +30,13 @@ public class PosDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_ORDERS);
+        db.execSQL(CREATE_TABLE_LOADING);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS orders");
+        db.execSQL("DROP TABLE IF EXISTS loading");
         onCreate(db);
-    }    }
+    }
+}

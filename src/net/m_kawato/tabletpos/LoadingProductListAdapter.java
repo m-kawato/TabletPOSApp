@@ -49,7 +49,7 @@ public class LoadingProductListAdapter extends BaseAdapter {
         Product product = this.productList.get(position);
         // ImageView imageView = (ImageView) view.findViewById(R.id.image);
         TextView productNameView = (TextView) view.findViewById(R.id.product_name);
-        productNameView.setText(product.productName);
+        productNameView.setText(String.format("%d, %s", product.productId, product.productName));
         CheckBox checkBox = (CheckBox)  view.findViewById(R.id.loading_checked);
         checkBox.setTag(position);
         checkBox.setChecked(product.loaded);

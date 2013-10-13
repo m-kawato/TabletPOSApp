@@ -6,6 +6,7 @@ import java.util.List;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -58,6 +59,7 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
 
         Button btnTopMenu = (Button) findViewById(R.id.btn_topmenu);
         btnTopMenu.setOnClickListener(this);
+
     }
 
     @Override
@@ -67,6 +69,13 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
         return true;
     }
     
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        saveLoadingState();
+        super.onDestroy();
+    }
+
     // Event handler for check boxes and GoToTop button
     @Override
     public void onClick(View v) {
@@ -74,13 +83,15 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
 
         switch (v.getId()) {
         case R.id.btn_clear_all:
-            Log.d(TAG, "clear all");
+            Log.d(TAG, "Clear All button is clicked");
             for (Product p: globals.products) {
                 p.loaded = false;
             }
             this.productListAdapter.notifyDataSetChanged();
             break;
         case R.id.btn_topmenu:
+            Log.d(TAG, "Top Menu button is clicked");
+            saveLoadingState();
             i = new Intent(this, TopMenu.class);
             startActivity(i);
             break;
@@ -123,4 +134,20 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
         this.productListAdapter.notifyDataSetChanged();
     }
 
+    // Save loading state to SQLite3 database
+    private void saveLoadingState() {
+        // TODO implementation of this method
+        Log.d(TAG, "saveLoadingState");
+
+        PosDbHelper dbHelper = new PosDbHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.execSQL("DELETE FROM loading");
+        String insertLoading = "INSERT INTO loading (product_id, loaded) VALUES (?, ?)";
+        for (Product p: globals.products) {
+            if (p.loaded) {
+                db.execSQL(insertLoading, new String[] {Integer.toString(p.productId), "1"});
+            }
+        }
+    }
 }
