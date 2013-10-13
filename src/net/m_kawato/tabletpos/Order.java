@@ -2,7 +2,6 @@ package net.m_kawato.tabletpos;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -13,25 +12,23 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-public class Order extends Activity implements OnClickListener, AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, DialogInterface.OnDismissListener, OnEditorActionListener {
+public class Order extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener {
     private static final String TAG = "Order";
     private Globals globals;
     private List<Product> productsInCategory; // products in the selected category
-    private List<Map<String, Object>> productList;
     private int selectedPosition;
-    private SimpleAdapter productListAdapter;
+    private ProductListAdapter productListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +37,11 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
 
         globals = (Globals) this.getApplication();
         this.productsInCategory = new ArrayList<Product>();
-        this.productList = new ArrayList<Map<String, Object>>();
         Log.d(TAG, "onCreate: products.size() = " + globals.products.size());
         OrderInputHelper orderInputHelper = new OrderInputHelper(this, globals);
 
         // Build ListView for products
-        String[] from = {"image", "product_name", "unit_price", "unit_price_box", "quantity", "amount"};
-        int[] to = {R.id.image, R.id.product_name, R.id.unit_price, R.id.unit_price_box, R.id.quantity, R.id.amount};
-        this.productListAdapter = new SimpleAdapter(this, this.productList, R.layout.order_item, from, to);
+        this.productListAdapter = new ProductListAdapter(this, this.productsInCategory, this);
 
         ListView productListView = (ListView) findViewById(R.id.list);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -56,7 +50,6 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
         productListView.addHeaderView(header);
         productListView.addFooterView(footer);
         productListView.setAdapter(this.productListAdapter);
-        productListView.setOnItemClickListener(this);
         
         // Loading sheet number
         EditText loadingSheetNumberView = (EditText) findViewById(R.id.loading_sheet_number);
@@ -131,32 +124,18 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
             i = new Intent(this, Confirm.class);
             startActivity(i);
             break;
+        case R.id.order_checked:
+            int position = (Integer) v.getTag();
+            boolean checked = ((CheckBox) v).isChecked();
+            Log.d(TAG, String.format("onClick: oder_checked position=%d, checked=%b", position, checked));
+            Product p = this.productsInCategory.get(position);
+            if (checked) {
+                p.orderItem = new OrderItem(this, this.productsInCategory.get(position), 0);
+            } else {
+                p.orderItem = null;
+            }
+            break;
         }        
-    }
-
-    // Event handler for items of product list
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        position--; // compensate for position increase when header is inserted
-        Log.d(TAG, "onItemClick: position = " + position);
-        Product product = this.productsInCategory.get(position);
-        Log.d(TAG, "onItemClick: productId = " + product.productId + ", productName = " + product.productName);
-        this.selectedPosition = position;
-        OrderInputDialog dialog = new OrderInputDialog(this, product);
-        dialog.setOnDismissListener(this);
-        dialog.show();
-    }
-
-    // Event listener for order input dialog
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        Log.d(TAG, "onDismiss");
-        Product product = this.productsInCategory.get(this.selectedPosition);
-        if (product.orderItem != null) {
-            globals.transaction.addOrderItem(product.orderItem);
-        }
-        this.productList.set(this.selectedPosition, product.orderItem.toMap());
-        this.productListAdapter.notifyDataSetChanged();
     }
 
     // Update loading sheet number
@@ -174,20 +153,12 @@ public class Order extends Activity implements OnClickListener, AdapterView.OnIt
     private void changeCategory(String category) {
         Log.d(TAG, String.format("changeCategory: %s", category));
         this.productsInCategory.clear();
-        this.productList.clear();        
-        Log.d(TAG, String.format("changeCategory: productList.size = %d", this.productList.size()));
         for(Product product: globals.products) {
             if (! product.category.equals(category)) {
                 continue;
             }
             this.productsInCategory.add(product);
-            if (product.orderItem == null) {
-                this.productList.add(product.getDefaultMap());
-            } else {
-                this.productList.add(product.orderItem.toMap());
-            }
         }
         this.productListAdapter.notifyDataSetChanged();
     }
-
 }

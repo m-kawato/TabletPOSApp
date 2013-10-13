@@ -28,8 +28,7 @@
     <string name="unit_price_box">Price/Box</string>
     <string name="quantity">Quantity</string>
     <string name="quantity_label">Quantity:</string>
-    <string name="quantity_box">Quantity\n(box)</string>
-    <string name="quantity_box_label">Quantity (box):</string>
+    <string name="order_checked">Order</string>
     <string name="down">-</string>
     <string name="up">+</string>
     <string name="amount">Amount</string>
