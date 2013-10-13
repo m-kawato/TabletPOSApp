@@ -22,6 +22,10 @@ public class Transaction {
         this.creditAmount = creditAmount;
     }
 
+    public void clearOrderItems() {
+        this.orderItems.clear();
+    }
+
     public void addOrderItem(OrderItem orderItem) {
         if (! this.orderItems.contains(orderItem)) {
             this.orderItems.add(orderItem);

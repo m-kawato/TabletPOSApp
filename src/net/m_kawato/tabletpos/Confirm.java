@@ -39,6 +39,14 @@ public class Confirm extends Activity implements OnClickListener, AdapterView.On
         this.globals = (Globals) this.getApplication();
         OrderInputHelper orderInputHelper = new OrderInputHelper(this, globals);
 
+        // Set transaction data in globals
+        globals.transaction.clearOrderItems();
+        for (Product p: globals.products) {
+            if (p.orderItem != null) {
+                globals.transaction.addOrderItem(p.orderItem);
+            }
+        }
+
         // Build ListView of order items
         ListView orderListView = (ListView) findViewById(R.id.list);
         LayoutInflater inflater = this.getLayoutInflater();
