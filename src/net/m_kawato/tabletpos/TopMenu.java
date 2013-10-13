@@ -80,10 +80,12 @@ public class TopMenu extends Activity implements OnClickListener {
     // load product data from product information file
     private void loadProductData() {
         Log.d(TAG, "loadProductData");
+        if (globals.categories != null && globals.categories.size() != 0) {
+            return;
+        }
         String sdcardPath = Environment.getExternalStorageDirectory().getPath();
         String dirname = String.format("%s/%s", sdcardPath, Globals.SDCARD_DIRNAME);
         String productsFilename = String.format("%s/%s", dirname, Globals.PRODUCTS_FILENAME);
-//        globals.products = new ArrayList<Product>();
         globals.categories = new ArrayList<String>();
         List<String> lines = new ArrayList<String>();
         try {
@@ -138,6 +140,9 @@ public class TopMenu extends Activity implements OnClickListener {
     // load route and place data from place information file
     private void loadPlaceData() {
         Log.d(TAG, "loadPlaceData");
+        if (globals.routes != null && globals.routes.size() != 0) {
+            return;
+        }
         String sdcardPath = Environment.getExternalStorageDirectory().getPath();
         String dirname = String.format("%s/%s", sdcardPath, Globals.SDCARD_DIRNAME);
         String placesFilename = String.format("%s/%s", dirname, Globals.PLACES_FILENAME);

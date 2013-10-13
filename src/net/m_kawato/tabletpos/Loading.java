@@ -10,10 +10,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.Spinner;
 
-public class Loading extends Activity implements View.OnClickListener {
+public class Loading extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     private static final String TAG = "Loading";
     private Globals globals;
     private List<Product> productsInCategory; // products in the selected category
@@ -37,6 +41,23 @@ public class Loading extends Activity implements View.OnClickListener {
         productListView.addHeaderView(header);
         productListView.addFooterView(footer);
         productListView.setAdapter(this.productListAdapter);
+
+        // Spinner for category selection
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        for(String category: globals.categories) {
+            categoryAdapter.add(category);
+        }
+        Spinner spnCategory = (Spinner) findViewById(R.id.spn_category);
+        spnCategory.setAdapter(categoryAdapter);    
+        spnCategory.setOnItemSelectedListener(this);
+        
+        // Event handlers of buttons (Clear All, Top Menu)
+        Button btnClearAll = (Button) findViewById(R.id.btn_clear_all);
+        btnClearAll.setOnClickListener(this);
+
+        Button btnTopMenu = (Button) findViewById(R.id.btn_topmenu);
+        btnTopMenu.setOnClickListener(this);
     }
 
     @Override
@@ -52,16 +73,54 @@ public class Loading extends Activity implements View.OnClickListener {
         Intent i;
 
         switch (v.getId()) {
-        case R.id.btn_gototop:
+        case R.id.btn_clear_all:
+            Log.d(TAG, "clear all");
+            for (Product p: globals.products) {
+                p.loaded = false;
+            }
+            this.productListAdapter.notifyDataSetChanged();
+            break;
+        case R.id.btn_topmenu:
             i = new Intent(this, TopMenu.class);
             startActivity(i);
             break;
         case R.id.loading_checked:
             int position = (Integer) v.getTag();
             boolean checked = ((CheckBox) v).isChecked();
-            Log.d(TAG, String.format("onClick: oder_checked position=%d, checked=%b", position, checked));
+            Log.d(TAG, String.format("onClick: loading_checked position=%d, checked=%b", position, checked));
+            Product p = this.productsInCategory.get(position);
+            p.loaded = checked;
             break;
         }        
+    }
+
+    // Event handler for category selector
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.d(TAG, String.format("onItemSelected: id=%x, position=%d", parent.getId(), position));
+        switch (parent.getId()) {
+        case R.id.spn_category:
+            changeCategory(globals.categories.get(position));
+            break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        Log.d(TAG, "onNothingSelected");
+    }
+
+    // Change selected category of products
+    private void changeCategory(String category) {
+        Log.d(TAG, String.format("changeCategory: %s", category));
+        this.productsInCategory.clear();
+        for (Product product: globals.products) {
+            if (! product.category.equals(category)) {
+                continue;
+            }
+            this.productsInCategory.add(product);
+        }
+        this.productListAdapter.notifyDataSetChanged();
     }
 
 }

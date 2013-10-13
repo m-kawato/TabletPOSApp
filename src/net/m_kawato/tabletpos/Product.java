@@ -15,7 +15,8 @@ public class Product {
     public BigDecimal unitPriceBox;
     public int numPiecesInBox;
     public OrderItem orderItem; // refers to the order item for this product
-
+    public boolean loaded = false; // true if the product is checked in Loading activity
+    
     public Product(Context context, int productId, String productName, String category, BigDecimal unitPrice, BigDecimal unitPriceBox, int numPiecesInBox) {
         this.context = context;
         this.productId = productId;

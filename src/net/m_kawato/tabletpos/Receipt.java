@@ -81,8 +81,8 @@ public class Receipt extends Activity implements OnClickListener {
         btnConfirm.setOnClickListener(this);
 
         // "Enter New Order" button (aka. go to top)
-        Button btnGotoTop = (Button) findViewById(R.id.btn_gototop);
-        btnGotoTop.setOnClickListener(this);
+        Button btnNewOrder = (Button) findViewById(R.id.btn_neworder);
+        btnNewOrder.setOnClickListener(this);
         
         // "Export" button
         Button btnExport = (Button) findViewById(R.id.btn_export);

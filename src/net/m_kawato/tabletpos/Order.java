@@ -127,7 +127,7 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
         case R.id.order_checked:
             int position = (Integer) v.getTag();
             boolean checked = ((CheckBox) v).isChecked();
-            Log.d(TAG, String.format("onClick: oder_checked position=%d, checked=%b", position, checked));
+            Log.d(TAG, String.format("onClick: order_checked position=%d, checked=%b", position, checked));
             Product p = this.productsInCategory.get(position);
             if (checked) {
                 p.orderItem = new OrderItem(this, this.productsInCategory.get(position), 0);

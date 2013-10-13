@@ -18,7 +18,7 @@
     <string name="about">About</string>
     <string name="clear_all">Clear All</string>
     <string name="loaded">Loaded</string>
-    <string name="gototop">Top Menu</string>
+    <string name="topmenu">Top Menu</string>
     <string name="loading_sheet_number">Loading Sheet Number</string>
     <string name="enter">Enter</string>
     <string name="category">Category</string>

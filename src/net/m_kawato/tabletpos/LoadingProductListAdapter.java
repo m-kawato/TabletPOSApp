@@ -44,7 +44,7 @@ public class LoadingProductListAdapter extends BaseAdapter {
         View view = convertView;
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.order_item, null);
+            view = inflater.inflate(R.layout.loading_item, null);
         }
         Product product = this.productList.get(position);
         // ImageView imageView = (ImageView) view.findViewById(R.id.image);
@@ -52,7 +52,7 @@ public class LoadingProductListAdapter extends BaseAdapter {
         productNameView.setText(product.productName);
         CheckBox checkBox = (CheckBox)  view.findViewById(R.id.loading_checked);
         checkBox.setTag(position);
-//        checkBox.setChecked(!(product.orderItem == null));
+        checkBox.setChecked(product.loaded);
         checkBox.setOnClickListener(this.onClickListener);
         return view;
     }
