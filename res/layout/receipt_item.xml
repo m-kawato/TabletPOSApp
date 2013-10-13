@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:background="#fff0f0ff" >
+    android:background="@color/order_item_background" >
     
    <TextView
         android:id="@+id/product_name"
