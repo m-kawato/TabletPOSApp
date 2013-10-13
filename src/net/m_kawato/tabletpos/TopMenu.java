@@ -39,9 +39,12 @@ public class TopMenu extends Activity implements OnClickListener {
         loadProductData();
         loadPlaceData();
         
-        // "Order Input" button
-        Button btnStart = (Button) findViewById(R.id.btn_start);
-        btnStart.setOnClickListener(this);
+        // Buttons (Enter Order, Enter Loading, About)
+        Button btnEnterOrder = (Button) findViewById(R.id.btn_enterorder);
+        btnEnterOrder.setOnClickListener(this);
+
+        Button btnLoading = (Button) findViewById(R.id.btn_loading);
+        btnLoading.setOnClickListener(this);
 
         // "About" button
         Button btnAbout = (Button) findViewById(R.id.btn_about);
@@ -51,10 +54,14 @@ public class TopMenu extends Activity implements OnClickListener {
     public void onClick(View v) {
         Intent i;
         switch (v.getId()) {
-            case R.id.btn_start:
+            case R.id.btn_enterorder:
                 // increment transactionId and go to Order page
                 globals.incrTransactionId();
                 i = new Intent(this, Order.class);
+                startActivity(i);
+                break;
+            case R.id.btn_loading:
+                i = new Intent(this, Loading.class);
                 startActivity(i);
                 break;
             case R.id.btn_about:

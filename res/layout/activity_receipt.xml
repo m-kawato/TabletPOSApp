@@ -116,7 +116,7 @@
                 android:text="@string/confirm" />
 
             <Button
-                android:id="@+id/btn_gototop"
+                android:id="@+id/btn_neworder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -124,7 +124,7 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="20dp"
                 android:drawablePadding="10dp"
-                android:text="@string/gototop" />
+                android:text="@string/neworder" />
 
             <Button
                 android:id="@+id/btn_export"

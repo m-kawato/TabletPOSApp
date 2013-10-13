@@ -107,7 +107,7 @@ public class Receipt extends Activity implements OnClickListener {
             i = new Intent(this, Confirm.class);
             startActivity(i);
             break;
-        case R.id.btn_gototop:
+        case R.id.btn_neworder:
             // reset order status and return to Order page
             globals.initialize();
             globals.incrTransactionId();

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    
+    <View 
+        android:layout_width="match_parent" 
+        android:layout_height="2dp"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/darker_gray" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp" >
+        <Button
+            android:id="@+id/btn_gototop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:drawableLeft="@android:drawable/ic_media_next"
+            android:paddingLeft="10dp"
+            android:paddingRight="20dp"
+            android:drawablePadding="10dp"
+            android:text="@string/gototop" />
+    </RelativeLayout>
+</LinearLayout>
