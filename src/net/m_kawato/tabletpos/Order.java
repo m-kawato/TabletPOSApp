@@ -154,10 +154,9 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
         Log.d(TAG, String.format("changeCategory: %s", category));
         this.productsInCategory.clear();
         for(Product product: globals.products) {
-            if (! product.category.equals(category)) {
-                continue;
+            if (product.category.equals(category) && product.loaded) {
+                this.productsInCategory.add(product);
             }
-            this.productsInCategory.add(product);
         }
         this.productListAdapter.notifyDataSetChanged();
     }
