@@ -3,11 +3,9 @@ package net.m_kawato.tabletpos;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -16,20 +14,18 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-public class Confirm extends Activity implements OnClickListener, AdapterView.OnItemClickListener, DialogInterface.OnDismissListener, OnEditorActionListener {
+public class Confirm extends Activity implements OnClickListener, OnEditorActionListener {
     private static final String TAG = "Confirm";
     private Globals globals;
-    private int selectedPosition;
-    private SimpleAdapter orderListAdapter;
-    private List<Map<String, Object>> orderItemList;
+    private OrderListAdapter orderListAdapter;
+    private List<OrderItem> orderItemList;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,16 +51,13 @@ public class Confirm extends Activity implements OnClickListener, AdapterView.On
         orderListView.addHeaderView(header);
         orderListView.addFooterView(footer);
 
-        this.orderItemList = new ArrayList<Map<String, Object>>(); 
+        this.orderItemList = new ArrayList<OrderItem>(); 
         for(OrderItem orderItem: globals.transaction.orderItems) {
-            this.orderItemList.add(orderItem.toMap());
+            this.orderItemList.add(orderItem);
         }
 
-        String[] from = {"image", "product_name", "unit_price", "unit_price_box", "quantity", "amount"};
-        int[] to = {R.id.image, R.id.product_name, R.id.unit_price, R.id.unit_price_box, R.id.quantity, R.id.amount};
-        this.orderListAdapter = new SimpleAdapter(this, this.orderItemList, R.layout.confirm_item, from, to);
+        this.orderListAdapter = new OrderListAdapter(this, this.orderItemList, this, this);
         orderListView.setAdapter(this.orderListAdapter);        
-        orderListView.setOnItemClickListener(this);
 
         // Loading sheet number
         TextView loadingSheetNumberView = (TextView) findViewById(R.id.loading_sheet_number);
@@ -105,36 +98,35 @@ public class Confirm extends Activity implements OnClickListener, AdapterView.On
         return true;
     }
 
-    // Event handler for items of order item list
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        position--; // compensate for position increase when header is inserted
-        Log.d(TAG, "onItemClickListener: position = " + position);
-        OrderItem orderItem = globals.transaction.orderItems.get(position);
-        Log.d(TAG, "onItemClick: productId = " + orderItem.product.productId + ", productName = " + orderItem.product.productName);
-        this.selectedPosition = position;
-        OrderInputDialog dialog = new OrderInputDialog(this, orderItem.product);
-        dialog.setOnDismissListener(this);
-        dialog.show();
-    }
-
     // Event handler for TextEdit
     @Override  
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         Log.d(TAG, "onEditorAction: actionId=" + actionId);
-        if (actionId == EditorInfo.IME_ACTION_GO) {  
-            updateCreditAmount();
-        }  
+        if (v.getId() == R.id.credit_amount && actionId == EditorInfo.IME_ACTION_GO) {  
+            updateCreditAmount((EditText) v);
+        } else if (v.getId() == R.id.quantity && actionId == EditorInfo.IME_ACTION_GO) {
+            int position = (Integer) v.getTag();
+            updateQuantity((EditText) v, position);
+        }
         return true;  
     }  
 
     // Event handler for buttons
     @Override
     public void onClick(View v) {
+        Log.d(TAG, "onClick");
         Intent i;
         switch (v.getId()) {
+        case R.id.btn_update_quantity:
+            LinearLayout confirmItemView = (LinearLayout) v.getParent();
+            EditText quantityView = (EditText) confirmItemView.findViewById(R.id.quantity);
+            int position = (Integer) quantityView.getTag();
+            Log.d(TAG, "onclick-btn_update_quantity: position = " + position);
+            updateQuantity(quantityView, position);
+            break;
         case R.id.btn_update:
-            updateCreditAmount();
+            EditText creditAmountView = (EditText) findViewById(R.id.credit_amount);
+            updateCreditAmount(creditAmountView);
             break;
         case R.id.btn_order:
             i = new Intent(this, Order.class);
@@ -147,23 +139,8 @@ public class Confirm extends Activity implements OnClickListener, AdapterView.On
         }        
     } 
 
-    // Event handler for order edit dialog
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        Log.d(TAG, "onDismiss");
-        OrderItem orderItem = globals.transaction.orderItems.get(this.selectedPosition);
-        this.orderItemList.set(this.selectedPosition, orderItem.toMap());
-        this.orderListAdapter.notifyDataSetChanged();
-
-        // Update totalAmount and cashAmount
-        TextView totalAmountView = (TextView) findViewById(R.id.total_amount);
-        totalAmountView.setText(globals.transaction.getFormattedTotalAmount());
-        TextView cashAmountView = (TextView) findViewById(R.id.cash_amount);
-        cashAmountView.setText(globals.transaction.getFormattedCashAmount());        
-    }    
-    
-    private void updateCreditAmount() {
-        EditText creditAmountView = (EditText) findViewById(R.id.credit_amount);
+    // Update TextView for credit amount
+    private void updateCreditAmount(EditText creditAmountView) {
         String creditAmountText = creditAmountView.getText().toString();
         if (creditAmountText.equals("")) {
             return;
@@ -175,7 +152,27 @@ public class Confirm extends Activity implements OnClickListener, AdapterView.On
         }
         globals.transaction.creditAmount = creditAmount;
 
-        // Update cashAmount
+        // Update creditAmount and cashAmount
+        creditAmountView.setText(creditAmount.toString());
+        TextView cashAmountView = (TextView) findViewById(R.id.cash_amount);
+        cashAmountView.setText(globals.transaction.getFormattedCashAmount());        
+    }
+    
+    // Update quantity for order item
+    private void updateQuantity(EditText quantityView, int position) {
+        Log.d(TAG, String.format("updateQuantity: position = %d", position));
+        String quantityText = quantityView.getText().toString();
+        if (quantityText.equals("")) {
+            return;
+        }
+        int quantity = Integer.parseInt(quantityText);
+        Log.d(TAG, String.format("updateQuantity: quantity = %d", quantity));
+        this.orderItemList.get(position).quantity = quantity;
+        this.orderListAdapter.notifyDataSetChanged();
+
+        // Update totalAmount and cashAmount
+        TextView totalAmountView = (TextView) findViewById(R.id.total_amount);
+        totalAmountView.setText(globals.transaction.getFormattedTotalAmount());
         TextView cashAmountView = (TextView) findViewById(R.id.cash_amount);
         cashAmountView.setText(globals.transaction.getFormattedCashAmount());        
     }

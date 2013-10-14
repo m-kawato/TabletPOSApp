@@ -33,15 +33,4 @@ public class OrderItem {
         return String.format("OrderItem:product=%s,quantity=%d", this.product, this.quantity);
     }
 
-    public Map<String, Object> toMap() {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("image", context.getResources().getIdentifier("product" + this.product.productId, "drawable", context.getPackageName()));
-        map.put("product_name", this.product.productName);
-        map.put("quantity", Integer.toString(this.quantity));
-        map.put("unit_price", this.product.getFormattedUnitPrice());
-        map.put("unit_price_box", this.product.getFormattedUnitPriceBox());
-        map.put("amount", getFormattedAmount());
-        return map;
-    }
-
 }

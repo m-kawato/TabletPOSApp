@@ -79,7 +79,7 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
         return true;
     }
 
-    // Event handler for TextEdit (loading sheet number)
+    // Event handler for EditText (loading sheet number)
     @Override  
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         Log.d(TAG, "onEditorAction: actionId=" + actionId);
@@ -107,6 +107,7 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
     // Event handler for buttons (loading sheet number Enter, Confirm, order check boxes)
     @Override
     public void onClick(View v) {
+        Log.d(TAG, "onClick");
         Intent i;
 
         switch (v.getId()) {
