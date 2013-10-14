@@ -21,6 +21,8 @@ public class Globals extends Application {
     private static final String KEY_LOADING_SHEET_NUMBER = "LoadingSheetNumber";
     private static final String KEY_TRANSACTION_ID = "TransactionId";  
     public static final String SDCARD_DIRNAME = "TabletPOSApp";
+    public static final String IMAGE_DIRNAME = "images";
+    public static final String PRODUCT_IMAGE_PREFIX = "product";
     public static final String PRODUCTS_FILENAME = "products.csv";
     public static final String PLACES_FILENAME = "places.csv";
     public static final String RECEIPT_PREFIX = "receipt";
