@@ -44,7 +44,8 @@
         </activity>
         <activity
             android:name="net.m_kawato.tabletpos.Loading"
-            android:label="@string/title_activity_loading" >
+            android:label="@string/title_activity_loading"
+            android:screenOrientation="landscape" >
         </activity>
     </application>
 
