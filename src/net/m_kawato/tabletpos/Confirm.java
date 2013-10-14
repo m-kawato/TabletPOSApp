@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
 
 public class Confirm extends Activity implements OnClickListener, OnEditorActionListener {
@@ -142,16 +143,19 @@ public class Confirm extends Activity implements OnClickListener, OnEditorAction
 
     // Update TextView for credit amount
     private void updateCreditAmount(EditText creditAmountView) {
+        BigDecimal creditAmount = null;
         String creditAmountText = creditAmountView.getText().toString();
         if (creditAmountText.equals("")) {
-            return;
+            creditAmount = globals.transaction.creditAmount;
+        } else {
+            creditAmount = new BigDecimal(creditAmountText);
+            if (globals.transaction.getTotalAmount().compareTo(creditAmount) >= 0) {
+                globals.transaction.creditAmount = creditAmount;
+            } else {
+                creditAmount = globals.transaction.creditAmount;
+                Toast.makeText(this, "Credit amount cannot be larger than the total amount.", Toast.LENGTH_LONG).show();
+            }
         }
-        BigDecimal creditAmount = new BigDecimal(creditAmountText);
-        if (globals.transaction.getTotalAmount().compareTo(creditAmount) <= 0) {
-            // TODO show toast (issue #36)
-            return;
-        }
-        globals.transaction.creditAmount = creditAmount;
 
         // Update creditAmount and cashAmount
         creditAmountView.setText(creditAmount.toString());
@@ -163,12 +167,16 @@ public class Confirm extends Activity implements OnClickListener, OnEditorAction
     private void updateQuantity(EditText quantityView, int position) {
         Log.d(TAG, String.format("updateQuantity: position = %d", position));
         String quantityText = quantityView.getText().toString();
-        if (quantityText.equals("")) {
-            return;
+        OrderItem orderItem = this.orderItemList.get(position);
+        int oldQuantity = orderItem.quantity;
+
+        if (! quantityText.equals("")) {
+            orderItem.quantity = Integer.parseInt(quantityText);
+            if (globals.transaction.getCashAmount().compareTo(new BigDecimal(0)) < 0) {
+                orderItem.quantity = oldQuantity;
+                Toast.makeText(this, "Credit amount cannot be larger than the total amount.", Toast.LENGTH_LONG).show();
+            }
         }
-        int quantity = Integer.parseInt(quantityText);
-        Log.d(TAG, String.format("updateQuantity: quantity = %d", quantity));
-        this.orderItemList.get(position).quantity = quantity;
         this.orderListAdapter.notifyDataSetChanged();
 
         // Update totalAmount and cashAmount
