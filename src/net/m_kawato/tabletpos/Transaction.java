@@ -60,4 +60,15 @@ public class Transaction {
         return this.creditAmount.toString() + " " + context.getString(R.string.currency);
         
     }
+
+    // Remove order item where quantity == 0
+    public void removeZeroQuantity() {
+        List<OrderItem> newOrderItems = new ArrayList<OrderItem>();
+        for (OrderItem orderItem: this.orderItems) {
+            if (orderItem.quantity > 0) {
+                newOrderItems.add(orderItem);
+            }
+        }
+        this.orderItems = newOrderItems;
+    }
 }

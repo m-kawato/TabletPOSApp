@@ -133,6 +133,7 @@ public class Confirm extends Activity implements OnClickListener, OnEditorAction
             startActivity(i);
             break;
         case R.id.btn_receipt:
+            globals.transaction.removeZeroQuantity();
             i = new Intent(this, Receipt.class);
             startActivity(i);
             break;
