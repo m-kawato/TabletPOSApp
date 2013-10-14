@@ -1,12 +1,18 @@
 package net.m_kawato.tabletpos;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.R.drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,14 +21,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 public class Loading extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     private static final String TAG = "Loading";
     private Globals globals;
     private List<Product> productsInCategory; // products in the selected category
-    private LoadingProductListAdapter productListAdapter;
+    // private LoadingProductListAdapter productListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,16 +45,8 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
         this.productsInCategory = new ArrayList<Product>();
 
         // Build ListView for products
-        this.productListAdapter = new LoadingProductListAdapter(this, this.productsInCategory, this);
-
-        ListView productListView = (ListView) findViewById(R.id.list);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View header = inflater.inflate(R.layout.loading_header, null);
-        View footer = inflater.inflate(R.layout.loading_footer, null);
-        productListView.addHeaderView(header);
-        productListView.addFooterView(footer);
-        productListView.setAdapter(this.productListAdapter);
-
+//        this.productListAdapter = new LoadingProductListAdapter(this, this.productsInCategory, this);
+        
         // Spinner for category selection
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -52,7 +56,7 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
         Spinner spnCategory = (Spinner) findViewById(R.id.spn_category);
         spnCategory.setAdapter(categoryAdapter);    
         spnCategory.setOnItemSelectedListener(this);
-        
+
         // Event handlers of buttons (Clear All, Top Menu)
         Button btnClearAll = (Button) findViewById(R.id.btn_clear_all);
         btnClearAll.setOnClickListener(this);
@@ -87,7 +91,7 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
             for (Product p: globals.products) {
                 p.loaded = false;
             }
-            this.productListAdapter.notifyDataSetChanged();
+            updateProductTable();
             break;
         case R.id.btn_topmenu:
             Log.d(TAG, "Top Menu button is clicked");
@@ -131,12 +135,67 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
             }
             this.productsInCategory.add(product);
         }
-        this.productListAdapter.notifyDataSetChanged();
+        buildProductTable();
+    }
+
+    // Build product table
+    private void buildProductTable() {
+        TableLayout table = (TableLayout) findViewById(R.id.product_table);
+        table.removeAllViews();
+        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        int row = 0;
+        TableRow tableRow = new TableRow(this);
+        for (int position = 0; position < this.productsInCategory.size(); position++) {
+            Product p = this.productsInCategory.get(position);
+
+            LinearLayout loadingItem = (LinearLayout) inflater.inflate(R.layout.loading_item, null);
+            tableRow.addView(loadingItem);
+            
+            String imgFilePath =
+                    String.format("%s/%s/%s-%d.jpg",
+                    Globals.SDCARD_DIRNAME,
+                    Globals.IMAGE_DIRNAME,
+                    Globals.PRODUCT_IMAGE_PREFIX,
+                    p.productId);
+            File imgFile = new File(Environment.getExternalStorageDirectory(), imgFilePath);
+            ImageView imageView = (ImageView) loadingItem.findViewById(R.id.image);
+            if (imgFile.canRead()) {
+                Log.d(TAG, "image file = " + imgFile.toString());
+                Bitmap bm = BitmapFactory.decodeFile(imgFile.getPath());
+                imageView.setImageBitmap(bm);
+            } else {
+                imageView.setImageResource(drawable.ic_menu_gallery);
+            }
+
+            TextView productNameView = (TextView) loadingItem.findViewById(R.id.product_name);
+            productNameView.setText(String.format("%d, %s", p.productId, p.productName));
+
+            CheckBox checkBox = (CheckBox) loadingItem.findViewById(R.id.loading_checked);
+            checkBox.setTag(position);
+            checkBox.setChecked(p.loaded);
+            checkBox.setOnClickListener(this);
+            
+            row++;
+            if (row == 4) {
+                table.addView(tableRow);
+                tableRow = new TableRow(this);
+                row = 0;
+            }
+        }
+        if (row != 0) {
+            table.addView(tableRow);
+        }
+    }
+
+    // Update check state of product table
+    private void updateProductTable() {
+        buildProductTable();
+        // TODO update only check boxes instead of the whole table
     }
 
     // Save loading state to SQLite3 database
     private void saveLoadingState() {
-        // TODO implementation of this method
         Log.d(TAG, "saveLoadingState");
 
         PosDbHelper dbHelper = new PosDbHelper(this);
