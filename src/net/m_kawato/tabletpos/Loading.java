@@ -21,10 +21,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -44,9 +42,6 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
         globals = (Globals) this.getApplication();
         this.productsInCategory = new ArrayList<Product>();
 
-        // Build ListView for products
-//        this.productListAdapter = new LoadingProductListAdapter(this, this.productsInCategory, this);
-        
         // Spinner for category selection
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -168,13 +163,13 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
                 imageView.setImageResource(drawable.ic_menu_gallery);
             }
 
-            TextView productNameView = (TextView) loadingItem.findViewById(R.id.product_name);
-            productNameView.setText(String.format("%d, %s", p.productId, p.productName));
-
             CheckBox checkBox = (CheckBox) loadingItem.findViewById(R.id.loading_checked);
             checkBox.setTag(position);
             checkBox.setChecked(p.loaded);
             checkBox.setOnClickListener(this);
+
+            TextView productNameView = (TextView) loadingItem.findViewById(R.id.product_name);
+            productNameView.setText(String.format("%d, %s", p.productId, p.productName));
             
             row++;
             if (row == 4) {
