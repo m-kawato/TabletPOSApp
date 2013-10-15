@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -138,6 +140,20 @@ public class TopMenu extends Activity implements OnClickListener {
             globals.addCategory(category);
         }
 
+        // Sort categories and products in alphabetical order
+        Collections.sort(globals.categories, new Comparator<String>() {
+            @Override
+            public int compare(String category1, String category2) {
+                return category1.compareToIgnoreCase(category2);
+            }
+        });
+        Collections.sort(globals.products, new Comparator<Product>() {
+            @Override
+            public int compare(Product p1, Product p2) {
+                return p1.productName.compareToIgnoreCase(p2.productName);
+            }
+        });
+        
         // load loading states from SQLite3 database
         PosDbHelper dbHelper = new PosDbHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -211,6 +227,29 @@ public class TopMenu extends Activity implements OnClickListener {
             globals.addPlace(routeCode, placeCode);
             globals.addRouteName(routeCode, routeName);
             globals.addPlaceName(placeCode, placeName);
+        }
+
+        // Sort routes and places in alphabetical order
+        Collections.sort(globals.routes, new Comparator<String>() {
+            @Override
+            public int compare(String routeCode1, String routeCode2) {
+                String routeName1 = globals.routeName.get(routeCode1);
+                String routeName2 = globals.routeName.get(routeCode2);
+                return routeName1.compareToIgnoreCase(routeName2);
+            }
+        });
+        
+        for (String routeCode: globals.routes) {
+            List<String> places = globals.places.get(routeCode);
+            Collections.sort(places, new Comparator<String>() {
+                @Override
+                public int compare(String placeCode1, String placeCode2) {
+                    String placeName1 = globals.placeName.get(placeCode1);
+                    String placeName2 = globals.placeName.get(placeCode2);
+                    return placeName1.compareToIgnoreCase(placeName2);
+                }
+                
+            });
         }
     }
 }
