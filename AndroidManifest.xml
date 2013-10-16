@@ -47,6 +47,11 @@
             android:label="@string/title_activity_loading"
             android:screenOrientation="landscape" >
         </activity>
+        <activity
+            android:name="net.m_kawato.tabletpos.Stock"
+            android:label="@string/title_activity_stock"
+            android:screenOrientation="landscape" >
+        </activity>
     </application>
 
 </manifest>

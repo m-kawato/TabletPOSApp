@@ -10,7 +10,7 @@
     <string name="title_activity_order">Order</string>
     <string name="title_activity_confirm">Confirm</string>
     <string name="title_activity_receipt">Receipt</string>
-    <string name="title_activity_loading">Loading</string> 
+    <string name="title_activity_loading">Loading</string>
     <string name="title_dialog_order_input">Order Input</string>
     <string name="title_dialog_credit_input">Credit Input</string>
     <string name="loading">Enter Loading</string>
@@ -47,5 +47,6 @@
     <string name="cash_amount_label">Cash Amount:</string>
     <string name="product_image">Product Image</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_stock">Stock</string>
 
 </resources>
