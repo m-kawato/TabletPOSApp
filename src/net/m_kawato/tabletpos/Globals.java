@@ -159,4 +159,21 @@ public class Globals extends Application {
             System.out.println(String.format("%s -> %s", routeCode, routeName));
         }
     }
+
+    // Save loading/stock states to SQLite database
+    public void saveLoading() {
+        Log.d(TAG, "saveLoading");
+
+        PosDbHelper dbHelper = new PosDbHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.execSQL("DELETE FROM loading");
+        String insertLoading = "INSERT INTO loading (product_id, loaded, stock) VALUES (?, ?, ?)";
+        for (Product p: this.products) {
+            if (p.loaded) {
+                db.execSQL(insertLoading, new String[] {Integer.toString(p.productId), "1", Integer.toString(p.stock)});
+            }
+        }
+    }
+
 }

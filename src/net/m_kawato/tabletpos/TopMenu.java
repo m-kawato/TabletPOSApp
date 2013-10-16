@@ -154,14 +154,17 @@ public class TopMenu extends Activity implements OnClickListener {
             }
         });
         
-        // load loading states from SQLite3 database
+        // load loading/stock states from SQLite3 database
         PosDbHelper dbHelper = new PosDbHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT product_id FROM loading WHERE loaded = 1", null);
+        Cursor c = db.rawQuery("SELECT product_id,stock FROM loading WHERE loaded = 1", null);
         c.moveToFirst();
         for (int i = 0; i < c.getCount(); i++) {
             int productId = c.getInt(0);
-            globals.getProduct(productId).loaded = true;
+            int stock = c.getInt(1);
+            Product p = globals.getProduct(productId);
+            p.loaded = true;
+            p.stock = stock;
             c.moveToNext();
         }
         c.close();

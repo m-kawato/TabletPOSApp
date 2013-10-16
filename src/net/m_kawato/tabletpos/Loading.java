@@ -10,7 +10,6 @@ import android.os.Environment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -52,13 +51,15 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
         spnCategory.setAdapter(categoryAdapter);    
         spnCategory.setOnItemSelectedListener(this);
 
-        // Event handlers of buttons (Clear All, Top Menu)
+        // Event handlers of buttons (Clear All, Top Menu, Stock)
         Button btnClearAll = (Button) findViewById(R.id.btn_clear_all);
         btnClearAll.setOnClickListener(this);
 
         Button btnTopMenu = (Button) findViewById(R.id.btn_topmenu);
         btnTopMenu.setOnClickListener(this);
 
+        Button btnStock = (Button) findViewById(R.id.btn_stock);
+        btnStock.setOnClickListener(this);
     }
 
     @Override
@@ -71,11 +72,11 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
-        saveLoadingState();
+        globals.saveLoading();
         super.onDestroy();
     }
 
-    // Event handler for check boxes and GoToTop button
+    // Event handler for check boxes and navigation buttons
     @Override
     public void onClick(View v) {
         Intent i;
@@ -90,8 +91,14 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
             break;
         case R.id.btn_topmenu:
             Log.d(TAG, "Top Menu button is clicked");
-            saveLoadingState();
+            globals.saveLoading();
             i = new Intent(this, TopMenu.class);
+            startActivity(i);
+            break;
+        case R.id.btn_stock:
+            Log.d(TAG, "Stock button is clicked");
+            globals.saveLoading();
+            i = new Intent(this, Stock.class);
             startActivity(i);
             break;
         case R.id.loading_checked:
@@ -189,19 +196,4 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
         // TODO update only check boxes instead of the whole table
     }
 
-    // Save loading state to SQLite3 database
-    private void saveLoadingState() {
-        Log.d(TAG, "saveLoadingState");
-
-        PosDbHelper dbHelper = new PosDbHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        db.execSQL("DELETE FROM loading");
-        String insertLoading = "INSERT INTO loading (product_id, loaded) VALUES (?, ?)";
-        for (Product p: globals.products) {
-            if (p.loaded) {
-                db.execSQL(insertLoading, new String[] {Integer.toString(p.productId), "1"});
-            }
-        }
-    }
 }
