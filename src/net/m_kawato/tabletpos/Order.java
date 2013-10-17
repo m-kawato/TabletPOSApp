@@ -106,6 +106,9 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
     public void onClick(View v) {
         Log.d(TAG, "onClick");
         Intent i;
+        int position;
+        boolean checked;
+        Product p;
 
         switch (v.getId()) {
         case R.id.btn_enter:
@@ -115,11 +118,25 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
             i = new Intent(this, Confirm.class);
             startActivity(i);
             break;
+        case R.id.image:
+            position = (Integer) v.getTag();
+            Log.d(TAG, String.format("onClick: image position=%d", position));
+            View orderItemView = (View) v.getParent();
+            CheckBox checkBoxView = (CheckBox) orderItemView.findViewById(R.id.order_checked);
+            checked = ! checkBoxView.isChecked();
+            checkBoxView.setChecked(checked);
+            p = this.productsInCategory.get(position);
+            if (checked) {
+                p.orderItem = new OrderItem(this, this.productsInCategory.get(position), 0);
+            } else {
+                p.orderItem = null;
+            }
+            break;
         case R.id.order_checked:
-            int position = (Integer) v.getTag();
-            boolean checked = ((CheckBox) v).isChecked();
+            position = (Integer) v.getTag();
+            checked = ((CheckBox) v).isChecked();
             Log.d(TAG, String.format("onClick: order_checked position=%d, checked=%b", position, checked));
-            Product p = this.productsInCategory.get(position);
+            p = this.productsInCategory.get(position);
             if (checked) {
                 p.orderItem = new OrderItem(this, this.productsInCategory.get(position), 0);
             } else {
@@ -181,6 +198,8 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
             } else {
                 imageView.setImageResource(drawable.ic_menu_gallery);
             }
+            imageView.setTag(position);
+            imageView.setOnClickListener(this);
 
             CheckBox checkBox = (CheckBox) orderItem.findViewById(R.id.order_checked);
             checkBox.setTag(position);
