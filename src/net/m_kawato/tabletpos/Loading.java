@@ -80,12 +80,15 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
     @Override
     public void onClick(View v) {
         Intent i;
+        int position;
+        boolean checked;
+        Product p;
 
         switch (v.getId()) {
         case R.id.btn_clear_all:
             Log.d(TAG, "Clear All button is clicked");
-            for (Product p: globals.products) {
-                p.loaded = false;
+            for (Product product: globals.products) {
+                product.loaded = false;
             }
             updateProductTable();
             break;
@@ -101,11 +104,21 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
             i = new Intent(this, Stock.class);
             startActivity(i);
             break;
+        case R.id.image:
+            position = (Integer) v.getTag();
+            Log.d(TAG, String.format("onClick: image position=%d", position));
+            View orderItemView = (View) v.getParent();
+            CheckBox checkBoxView = (CheckBox) orderItemView.findViewById(R.id.loading_checked);
+            checked = ! checkBoxView.isChecked();
+            checkBoxView.setChecked(checked);
+            p = this.productsInCategory.get(position);
+            p.loaded = checked;
+            break;
         case R.id.loading_checked:
-            int position = (Integer) v.getTag();
-            boolean checked = ((CheckBox) v).isChecked();
+            position = (Integer) v.getTag();
+            checked = ((CheckBox) v).isChecked();
             Log.d(TAG, String.format("onClick: loading_checked position=%d, checked=%b", position, checked));
-            Product p = this.productsInCategory.get(position);
+            p = this.productsInCategory.get(position);
             p.loaded = checked;
             break;
         }        
@@ -169,6 +182,8 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
             } else {
                 imageView.setImageResource(drawable.ic_menu_gallery);
             }
+            imageView.setTag(position);
+            imageView.setOnClickListener(this);
 
             CheckBox checkBox = (CheckBox) loadingItem.findViewById(R.id.loading_checked);
             checkBox.setTag(position);
