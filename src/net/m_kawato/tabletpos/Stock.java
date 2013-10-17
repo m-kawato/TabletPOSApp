@@ -1,6 +1,5 @@
 package net.m_kawato.tabletpos;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,11 +31,14 @@ public class Stock extends Activity implements TextView.OnEditorActionListener, 
 
         this.globals = (Globals) this.getApplication();
 
-        // Build ListView of stock items
+        // Build ListView of stock items;
+        //   products are sorted in categoryName - productName
         this.stockList = new ArrayList<Product>();
-        for (Product p: globals.products) {
-            if (p.loaded) {
-                this.stockList.add(p);
+        for (String category: globals.categories) {
+            for (Product p : globals.products) {
+                if (p.category.equals(category) && p.loaded) {
+                    this.stockList.add(p);
+                }
             }
         }
         ListView stockListView = (ListView) findViewById(R.id.list);

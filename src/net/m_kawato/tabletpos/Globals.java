@@ -33,7 +33,7 @@ public class Globals extends Application {
     public List<Product> products = new ArrayList<Product>();
     @SuppressLint("UseSparseArrays")
     private Map<Integer, Product> productMap = new HashMap<Integer, Product>(); // map[productId -> product]
-    public List<String> categories;
+    public List<String> categories; // list of category names
     public List<String> routes; // list of routeCode
     public Map<String, List<String>> places; // Map[routeCode -> list of placeCode]
     public Map<String, String> routeName; // Map[routeCode -> routeName]
