@@ -10,6 +10,9 @@
         android:id="@+id/image"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:maxHeight="60dp"
+        android:maxWidth="60dp"
         android:paddingLeft="10dp"
         android:paddingTop="2dp"
         android:paddingBottom="2dp"
@@ -20,34 +23,41 @@
         android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
-        android:textSize="16sp" />
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/unit_price"
-        android:layout_width="110dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="16sp" />
+        android:textSize="15sp" />
     
     <TextView
         android:id="@+id/unit_price_box"
-        android:layout_width="110dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="16sp" />
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/stock"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="15sp" />
 
     <EditText
         android:id="@+id/quantity"
-        android:layout_width="90dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="16sp"
+        android:textSize="15sp"
         android:imeOptions="actionGo"
         android:inputType="number" />
     
     <Button
         android:id="@+id/btn_update_quantity"
-        android:layout_width="80dp"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/update"
@@ -55,9 +65,9 @@
 
     <TextView
         android:id="@+id/amount"
-        android:layout_width="110dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="16sp" />
+        android:textSize="15sp" />
     
 </LinearLayout>

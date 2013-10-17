@@ -171,10 +171,24 @@ public class Confirm extends Activity implements OnClickListener, OnEditorAction
         int oldQuantity = orderItem.quantity;
 
         if (! quantityText.equals("")) {
-            orderItem.quantity = Integer.parseInt(quantityText);
-            if (globals.transaction.getCashAmount().compareTo(new BigDecimal(0)) < 0) {
-                orderItem.quantity = oldQuantity;
-                Toast.makeText(this, "Credit amount cannot be larger than the total amount.", Toast.LENGTH_LONG).show();
+            int newQuantity = Integer.parseInt(quantityText);
+            Log.d(TAG, String.format("updateQuantity: newQuantity=%d, stock=%d",
+                    newQuantity, orderItem.product.stock));
+            if (newQuantity > orderItem.product.stock) {
+                Toast.makeText(
+                        this,
+                        "Quantity cannot be larger than the stock.",
+                        Toast.LENGTH_LONG).show();
+            } else {
+                orderItem.quantity = newQuantity;
+                if (globals.transaction.getCashAmount().compareTo(
+                        new BigDecimal(0)) < 0) {
+                    orderItem.quantity = oldQuantity;
+                    Toast.makeText(
+                            this,
+                            "Credit amount cannot be larger than the total amount.",
+                            Toast.LENGTH_LONG).show();
+                }
             }
         }
         this.orderListAdapter.notifyDataSetChanged();
