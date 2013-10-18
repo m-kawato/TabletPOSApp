@@ -9,7 +9,7 @@
         android:id="@+id/stock"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="30dp"
         android:gravity="center_horizontal"
         android:textSize="14sp"
