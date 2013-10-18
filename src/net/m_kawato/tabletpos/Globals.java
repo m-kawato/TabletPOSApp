@@ -61,7 +61,7 @@ public class Globals extends Application {
     }
 
     public void addProduct(Product product) {
-        Log.d(TAG, "addProduct: productId = " + product.productId);
+        // Log.d(TAG, "addProduct: productId = " + product.productId);
         this.products.add(product);
         this.productMap.put(product.productId, product);
     }
@@ -72,11 +72,11 @@ public class Globals extends Application {
 
     public void addPlace(String routeCode, String placeCode) {
         if (! this.routes.contains(routeCode)) {
-            Log.d(TAG, String.format("addPlace: add new route: %s", routeCode));
+            // Log.d(TAG, String.format("addPlace: add new route: %s", routeCode));
             this.routes.add(routeCode);
             this.places.put(routeCode, new ArrayList<String>());
         }
-        Log.d(TAG, String.format("addPlace: add new place: %s - %s", routeCode, placeCode));
+        //Log.d(TAG, String.format("addPlace: add new place: %s - %s", routeCode, placeCode));
         this.places.get(routeCode).add(placeCode);
     }
 
@@ -87,8 +87,10 @@ public class Globals extends Application {
                         routeCode, routeName));
             }
         } else {
+            /*
             Log.d(TAG, String.format("addRouteName: add new route name (%s,  %s)",
                     routeCode, routeName));
+            */
             this.routeName.put(routeCode, routeName);
         }
     }
@@ -100,8 +102,10 @@ public class Globals extends Application {
                     placeCode, placeName));
             }
         } else {
+            /*
             Log.d(TAG, String.format("addPlaceName: add new place name (%s,  %s)",
                     placeCode, placeName));
+            */
             this.placeName.put(placeCode, placeName);
         }
     }

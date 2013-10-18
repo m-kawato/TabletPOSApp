@@ -133,9 +133,11 @@ public class TopMenu extends Activity implements OnClickListener {
             int numPiecesInBox = Integer.parseInt(lineSplit[6]);
             BigDecimal unitPriceBox = new BigDecimal(lineSplit[7]);
 
+            /*
             Log.d(TAG, String.format("loadProductData: " +
                 "productId=%d, category=%s, productName=%s, unitPrice=%f, numPircesInBox=%d, unitPriceBox=%f", 
                 productId, category, productName, unitPrice, numPiecesInBox, unitPriceBox));
+            */
             Product p = new Product(this, productId, productName, category, unitPrice, unitPriceBox, numPiecesInBox);
             globals.addProduct(p);
             globals.addCategory(category);
@@ -225,9 +227,11 @@ public class TopMenu extends Activity implements OnClickListener {
             String routeName = lineSplit[4];
             String routeCode = lineSplit[5];
 
+            /*
             Log.d(TAG, String.format("loadPlacetData: " +
                 "placeCode=%s, placeName=%s, routeCode=%s, routeName=%s", 
                 placeCode, placeName, routeCode, routeName));
+            */
             globals.addPlace(routeCode, placeCode);
             globals.addRouteName(routeCode, routeName);
             globals.addPlaceName(placeCode, placeName);

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="white">#ffffff</color>
   	<color name="order_item_background">#f0f0ff</color>
+  	<color name="order_item_stock">#ff0000</color>
 </resources>

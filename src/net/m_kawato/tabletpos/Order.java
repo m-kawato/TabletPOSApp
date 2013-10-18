@@ -33,6 +33,7 @@ import android.widget.TextView;
 public class Order extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener {
     private static final String TAG = "Order";
     private Globals globals;
+    private List<String> categories; // category that contains at least one product with stocks
     private List<Product> productsInCategory; // products in the selected category
 
     @Override
@@ -57,8 +58,13 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
         orderInputHelper.buildPlaceSelector();
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        this.categories = new ArrayList<String>();
         for(String category: globals.categories) {
-            categoryAdapter.add(category);
+            if (categoryContainsProduct(category)) {
+                this.categories.add(category);
+                categoryAdapter.add(category);
+            }
         }
         Spinner spnCategory = (Spinner) findViewById(R.id.spn_category);
         spnCategory.setAdapter(categoryAdapter);    
@@ -95,7 +101,7 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
         Log.d(TAG, String.format("onItemSelected: id=%x, position=%d", parent.getId(), position));
         switch (parent.getId()) {
         case R.id.spn_category:
-            changeCategory(globals.categories.get(position));
+            changeCategory(this.categories.get(position));
             break;
         }
     }
@@ -163,13 +169,23 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
         }
         globals.setLoadingSheetNumber(loadingSheetNumber);
     }
-    
+
+    // See if the specified category contains at least one product with stocks
+    private boolean categoryContainsProduct(String category) {
+        for(Product p: globals.products) {
+            if (p.category.equals(category) && p.loaded && p.stock > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Change selected category of products
     private void changeCategory(String category) {
         Log.d(TAG, String.format("changeCategory: %s", category));
         this.productsInCategory.clear();
         for(Product product: globals.products) {
-            if (product.category.equals(category) && product.loaded) {
+            if (product.category.equals(category) && product.loaded && product.stock > 0) {
                 this.productsInCategory.add(product);
             }
         }
@@ -218,6 +234,9 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
 
             TextView unitPriceView = (TextView) orderItem.findViewById(R.id.unit_price);
             unitPriceView.setText(p.getFormattedUnitPrice());
+
+            TextView stockView = (TextView) orderItem.findViewById(R.id.stock);
+            stockView.setText(Integer.toString(p.stock));
 
             row++;
             if (row == 4) {
