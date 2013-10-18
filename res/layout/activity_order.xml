@@ -119,11 +119,22 @@
             android:layout_marginBottom="20dp"
             android:background="@android:color/darker_gray" />
 
-        <!-- Confirm button -->
+        <!-- Navigation Button (Confirm, Top Menu) -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp" >
+
+            <Button
+                android:id="@+id/btn_topmenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:drawableLeft="@drawable/arrow_up"
+                android:drawablePadding="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="20dp"
+                android:text="@string/topmenu" />
 
             <Button
                 android:id="@+id/btn_confirm"
@@ -137,6 +148,7 @@
                 android:paddingRight="20dp"
                 android:text="@string/confirm" />
         </RelativeLayout>
+
     </LinearLayout>
 
 </ScrollView>

@@ -83,11 +83,13 @@ public class Confirm extends Activity implements OnClickListener, OnEditorAction
         TextView cashAmountView = (TextView) findViewById(R.id.cash_amount);
         cashAmountView.setText(globals.transaction.getFormattedCashAmount());        
         
-        // "Order" button
+        // Navigation buttons (Order, Top Menu, Receipt)
+        Button btnTopMenu = (Button) findViewById(R.id.btn_topmenu);
+        btnTopMenu.setOnClickListener(this);
+
         Button btnOrder = (Button) findViewById(R.id.btn_order);
         btnOrder.setOnClickListener(this);
 
-        // "Receipt" button
         Button btnReceipt = (Button) findViewById(R.id.btn_receipt);
         btnReceipt.setOnClickListener(this);        
     }
@@ -131,6 +133,10 @@ public class Confirm extends Activity implements OnClickListener, OnEditorAction
             break;
         case R.id.btn_order:
             i = new Intent(this, Order.class);
+            startActivity(i);
+            break;
+        case R.id.btn_topmenu:
+            i = new Intent(this, TopMenu.class);
             startActivity(i);
             break;
         case R.id.btn_receipt:

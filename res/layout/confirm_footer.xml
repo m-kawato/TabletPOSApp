@@ -76,7 +76,7 @@
   	    </TableRow>
    	</TableLayout>
 
-    <!-- "Order" and "Receipt" buttons -->
+    <!-- Navigation buttons (Order, Top Menu, Receipt) -->
     <RelativeLayout 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -95,15 +95,27 @@
             android:text="@string/order" />
 
         <Button
+            android:id="@+id/btn_topmenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:drawableLeft="@drawable/arrow_up"
+            android:drawablePadding="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="20dp"
+            android:text="@string/topmenu" />
+
+        <Button
             android:id="@+id/btn_receipt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
             android:drawableLeft="@drawable/arrow_right"
+            android:drawablePadding="10dp"
             android:paddingLeft="10dp"
             android:paddingRight="20dp"
-            android:drawablePadding="10dp"
             android:text="@string/receipt" />
+
     </RelativeLayout>
 </LinearLayout>

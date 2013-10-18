@@ -64,7 +64,10 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
         spnCategory.setAdapter(categoryAdapter);    
         spnCategory.setOnItemSelectedListener(this);
 
-        // "Confirm" button
+        // Navigation buttons (Top Menu, Confirm)
+        Button btnTopMenu = (Button) findViewById(R.id.btn_topmenu);
+        btnTopMenu.setOnClickListener(this);
+
         Button btnConfirm = (Button) findViewById(R.id.btn_confirm);
         btnConfirm.setOnClickListener(this);
     }
@@ -114,7 +117,11 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
         case R.id.btn_enter:
             updateLoadingSheetNumber();
             break;
-        case R.id.btn_confirm:
+        case R.id.btn_topmenu:
+            i = new Intent(this, TopMenu.class);
+            startActivity(i);
+            break;
+       case R.id.btn_confirm:
             i = new Intent(this, Confirm.class);
             startActivity(i);
             break;
