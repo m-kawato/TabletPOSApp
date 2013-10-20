@@ -11,13 +11,15 @@
     <string name="title_activity_confirm">Confirm</string>
     <string name="title_activity_receipt">Receipt</string>
     <string name="title_activity_loading">Loading</string>
+    <string name="title_activity_loading_file_picker">Import Loading File</string>
+    <string name="title_activity_stock">Stock</string>
     <string name="title_dialog_order_input">Order Input</string>
     <string name="title_dialog_credit_input">Credit Input</string>
-    <string name="title_activity_stock">Stock</string>
     <string name="enter_loading">Enter Loading</string>
     <string name="loading">Loading</string>
     <string name="stock">Stock</string>
     <string name="enter_order">Enter Order</string>
+    <string name="import_loading">Import</string>
     <string name="about">About</string>
     <string name="clear_all">Clear All</string>
     <string name="loaded">Loaded</string>

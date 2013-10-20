@@ -52,6 +52,11 @@
             android:label="@string/title_activity_stock"
             android:screenOrientation="landscape" >
         </activity>
+        <activity
+            android:name="net.m_kawato.tabletpos.LoadingFilePicker"
+            android:label="@string/title_activity_loading_file_picker"
+            android:screenOrientation="landscape" >
+        </activity>
     </application>
 
 </manifest>

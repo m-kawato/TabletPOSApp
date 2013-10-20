@@ -51,12 +51,15 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
         spnCategory.setAdapter(categoryAdapter);    
         spnCategory.setOnItemSelectedListener(this);
 
-        // Event handlers of buttons (Clear All, Top Menu, Stock)
+        // Event handlers of buttons (Clear All, Top Menu, Import, Stock)
         Button btnClearAll = (Button) findViewById(R.id.btn_clear_all);
         btnClearAll.setOnClickListener(this);
 
         Button btnTopMenu = (Button) findViewById(R.id.btn_topmenu);
         btnTopMenu.setOnClickListener(this);
+
+        Button btnImport = (Button) findViewById(R.id.btn_import_loading);
+        btnImport.setOnClickListener(this);
 
         Button btnStock = (Button) findViewById(R.id.btn_stock);
         btnStock.setOnClickListener(this);
@@ -96,6 +99,10 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
             Log.d(TAG, "Top Menu button is clicked");
             globals.saveLoading();
             i = new Intent(this, TopMenu.class);
+            startActivity(i);
+            break;
+        case R.id.btn_import_loading:
+            i = new Intent(this, LoadingFilePicker.class);
             startActivity(i);
             break;
         case R.id.btn_stock:
