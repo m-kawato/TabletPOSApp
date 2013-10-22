@@ -168,6 +168,7 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
                String filename = data.getStringExtra("filename");
                Log.d(TAG, "onActivityResult: filename = " + filename);
                loadStockData(filename);
+               updateProductTable();
            }
        }
     }
