@@ -1,15 +1,26 @@
 package net.m_kawato.tabletpos;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.R.drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -26,9 +37,11 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Loading extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     private static final String TAG = "Loading";
+    private static final int REQCODE_FILEPICKER = 1001;
     private Globals globals;
     private List<Product> productsInCategory; // products in the selected category
     // private LoadingProductListAdapter productListAdapter;
@@ -92,6 +105,7 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
             Log.d(TAG, "Clear All button is clicked");
             for (Product product: globals.products) {
                 product.loaded = false;
+                product.stock = 0;
             }
             updateProductTable();
             break;
@@ -103,7 +117,7 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
             break;
         case R.id.btn_import_loading:
             i = new Intent(this, LoadingFilePicker.class);
-            startActivity(i);
+            startActivityForResult(i, REQCODE_FILEPICKER);
             break;
         case R.id.btn_stock:
             Log.d(TAG, "Stock button is clicked");
@@ -147,6 +161,17 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
         Log.d(TAG, "onNothingSelected");
     }
 
+    @Override
+    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+       if (requestCode == REQCODE_FILEPICKER) {
+           if (resultCode == RESULT_OK) {
+               String filename = data.getStringExtra("filename");
+               Log.d(TAG, "onActivityResult: filename = " + filename);
+               loadStockData(filename);
+           }
+       }
+    }
+           
     // Change selected category of products
     private void changeCategory(String category) {
         Log.d(TAG, String.format("changeCategory: %s", category));
@@ -218,4 +243,57 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
         // TODO update only check boxes instead of the whole table
     }
 
+    // load stock data from selected file
+    private void loadStockData(String basename) {
+        Log.d(TAG, "loadStockData: " + basename);
+        String sdcardPath = Environment.getExternalStorageDirectory().getPath();
+        String filename = String.format("%s/%s/%s", sdcardPath, Globals.SDCARD_DIRNAME, basename);
+        List<String> lines = new ArrayList<String>();
+        try {
+            File stockFile = new File(filename);
+            FileInputStream fin = new FileInputStream(stockFile);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
+            String line;
+            while((line = reader.readLine()) != null){     
+                lines.add(line);    
+            } 
+            fin.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to load stock data");
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setCancelable(false);
+            alertDialogBuilder.setTitle("Error");
+            alertDialogBuilder.setMessage("Failed to load stock data: \n" + filename);
+            alertDialogBuilder.setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+            alertDialogBuilder.create().show();
+            return;
+        }
+
+        for(int i = 0; i < lines.size(); i++) {
+            String[] lineSplit = lines.get(i).split("\\s*?,\\s*?");
+            int productId = -1;
+            int stock = -1;
+            try {
+                productId = Integer.parseInt(lineSplit[1]);
+                stock = Integer.parseInt(lineSplit[2]);
+            } catch (NumberFormatException e) {
+                continue;
+            }
+            Product p = globals.getProduct(productId);
+            if (p == null) {
+                Log.w(TAG, "loadStockData: failed to find productId: " + productId);
+                continue;
+            }
+            p.loaded = true;
+            p.stock = stock;
+            Log.d(TAG, String.format("loadStockData: productName=%s (%d), stock=%d", p.productName, productId, stock));
+        }
+        Toast.makeText(this, "Loading data has been imported.", Toast.LENGTH_LONG).show();
+    }
 }

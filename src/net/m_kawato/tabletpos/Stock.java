@@ -35,7 +35,7 @@ public class Stock extends Activity implements TextView.OnEditorActionListener, 
         //   products are sorted in categoryName - productName
         this.stockList = new ArrayList<Product>();
         for (String category: globals.categories) {
-            for (Product p : globals.products) {
+            for (Product p: globals.products) {
                 if (p.category.equals(category) && p.loaded) {
                     this.stockList.add(p);
                 }
