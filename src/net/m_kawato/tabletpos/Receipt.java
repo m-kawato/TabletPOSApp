@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -22,13 +23,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class Receipt extends Activity implements OnClickListener {
+public class Receipt extends Activity implements View.OnClickListener, DialogInterface.OnClickListener {
     private static final String TAG = "Receipt";
     private Globals globals;
     
@@ -39,9 +39,7 @@ public class Receipt extends Activity implements OnClickListener {
         setContentView(R.layout.activity_receipt);
 
         this.globals = (Globals) this.getApplication();
-        // Insert/update receipt to database
-        writeReceiptToDb();
-        
+
         // Loading sheet number
         TextView loadingSheetNumberView = (TextView) findViewById(R.id.loading_sheet_number);
         loadingSheetNumberView.setText(globals.loadingSheetNumber);
@@ -76,18 +74,16 @@ public class Receipt extends Activity implements OnClickListener {
         TextView cashAmountView = (TextView) findViewById(R.id.cash_amount);
         cashAmountView.setText(globals.transaction.getFormattedCashAmount());
         
-        // "Confirm" button
+        // Navigation buttons (Confirm, Top Menu, New Order)
         Button btnConfirm = (Button) findViewById(R.id.btn_confirm);
         btnConfirm.setOnClickListener(this);
 
-        // "Enter New Order" button (aka. go to top)
-        Button btnNewOrder = (Button) findViewById(R.id.btn_neworder);
+        Button btnTopMenu = (Button) findViewById(R.id.btn_topmenu);
+        btnTopMenu.setOnClickListener(this);
+
+        Button btnNewOrder = (Button) findViewById(R.id.btn_complete);
         btnNewOrder.setOnClickListener(this);
         
-        // "Export" button
-        Button btnExport = (Button) findViewById(R.id.btn_export);
-        btnExport.setOnClickListener(this);
-
         // Table of Today's past orders
         buildPastOrderList();
     }
@@ -107,22 +103,47 @@ public class Receipt extends Activity implements OnClickListener {
             i = new Intent(this, Confirm.class);
             startActivity(i);
             break;
-        case R.id.btn_neworder:
-            // reset order status and return to Order page
-            globals.initialize();
-            globals.incrTransactionId();
-            i = new Intent(this, Order.class);
+        case R.id.btn_topmenu:
+            i = new Intent(this, TopMenu.class);
             startActivity(i);
             break;
-        case R.id.btn_export:
-            exportReceipt();
+        case R.id.btn_complete:
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Save the receipt and enter a new order.");
+            builder.setPositiveButton(android.R.string.ok, this);
+            builder.setNegativeButton(android.R.string.cancel, this);
+            builder.show();
+
             break;
         }        
     }
 
+    // Event hander for dialog input
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        switch (which) {
+        case android.content.DialogInterface.BUTTON1:
+            Log.d(TAG, "onClick: BUTTON1");
+
+            // export receipt to file and DB
+            exportReceiptFile();
+            exportReceiptDb();
+
+            // reset order status and return to Order page
+            globals.initialize();
+            globals.incrTransactionId();
+            Intent i = new Intent(this, Order.class);
+            startActivity(i);
+            break;
+        case android.content.DialogInterface.BUTTON2:
+            break;
+        }
+        
+    }
+
     // Export receipt data to sdcard
-    private void exportReceipt() {
-        Log.d(TAG, "exportReceipt");
+    private void exportReceiptFile() {
+        Log.d(TAG, "exportReceiptFile");
 
         String sdcardPath = Environment.getExternalStorageDirectory().getPath();
         String dirname = String.format("%s/%s", sdcardPath, Globals.SDCARD_DIRNAME);
@@ -169,11 +190,7 @@ public class Receipt extends Activity implements OnClickListener {
                         creditAmountText, orderItem.product.productName, orderItem.product.productId, orderItem.quantity,
                         globals.loadingSheetNumber));
             }
-        
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("The receipt was successfully exported to\n" + filename);
-            builder.setPositiveButton(android.R.string.ok, null);
-            builder.show();
+    
         } catch (IOException e) {
             Log.e(TAG, "failed to write receipt to sdcard");
             e.printStackTrace();
@@ -183,8 +200,8 @@ public class Receipt extends Activity implements OnClickListener {
     }
 
     // Insert/update receipt to SQLite DB
-    private void writeReceiptToDb() {
-        Log.d(TAG, "writeReceiptToDb");
+    private void exportReceiptDb() {
+        Log.d(TAG, "exportReceiptDb");
         PosDbHelper dbHelper = new PosDbHelper(this);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -356,4 +373,5 @@ public class Receipt extends Activity implements OnClickListener {
         }
     
     }
+
 }

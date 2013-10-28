@@ -116,27 +116,27 @@
                 android:text="@string/confirm" />
 
             <Button
-                android:id="@+id/btn_neworder"
+                android:id="@+id/btn_topmenu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:drawableLeft="@android:drawable/ic_menu_edit"
+                android:drawableLeft="@drawable/arrow_up"
+                android:drawablePadding="10dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="20dp"
-                android:drawablePadding="10dp"
-                android:text="@string/neworder" />
+                android:text="@string/topmenu" />
 
             <Button
-                android:id="@+id/btn_export"
+                android:id="@+id/btn_complete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="20dp"
-                android:drawableLeft="@android:drawable/ic_menu_send"
+                android:drawableLeft="@android:drawable/ic_menu_save"
                 android:paddingLeft="10dp"
                 android:paddingRight="20dp"
                 android:drawablePadding="10dp"
-                android:text="@string/export" />
+                android:text="@string/complete" />
         </RelativeLayout>
 
         <!-- Past orders (place holder) -->

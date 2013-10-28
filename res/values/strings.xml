@@ -31,7 +31,7 @@
     <string name="confirm">Confirm</string>
     <string name="receipt">Receipt</string>
     <string name="export">Save to Excel</string>
-    <string name="neworder">Enter New Order</string>
+    <string name="complete">Complete</string>
     <string name="route">Route</string>
     <string name="place">Shop</string>
     <string name="product">Product</string>
