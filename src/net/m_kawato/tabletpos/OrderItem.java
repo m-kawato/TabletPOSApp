@@ -1,9 +1,6 @@
 package net.m_kawato.tabletpos;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
 import android.content.Context;
 
 public class OrderItem {

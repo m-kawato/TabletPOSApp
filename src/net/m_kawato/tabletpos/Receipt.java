@@ -109,11 +109,11 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
             break;
         case R.id.btn_complete:
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Complete");
             builder.setMessage("Save the receipt and enter a new order.");
             builder.setPositiveButton(android.R.string.ok, this);
             builder.setNegativeButton(android.R.string.cancel, this);
             builder.show();
-
             break;
         }        
     }
@@ -124,6 +124,9 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
         switch (which) {
         case android.content.DialogInterface.BUTTON1:
             Log.d(TAG, "onClick: BUTTON1");
+
+            // modify stock for items contained in the receipt
+            modifyStock();
 
             // export receipt to file and DB
             exportReceiptFile();
@@ -374,4 +377,14 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
     
     }
 
+    // Modify stocks of products according to the receipt
+    void modifyStock() {
+        Log.d(TAG, "modifyStock");
+
+        for (OrderItem orderItem: globals.transaction.orderItems) {
+            Product p = orderItem.product;
+            p.stock -= orderItem.quantity;
+        }
+        globals.saveLoading();
+    }
 }
