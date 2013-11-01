@@ -26,7 +26,7 @@ public class Globals extends Application {
     public static final String PRODUCTS_FILENAME = "products.csv";
     public static final String PLACES_FILENAME = "places.csv";
     public static final String RECEIPT_PREFIX = "receipt";
-    public static final String RECEIPT_SUFFIX = "xls";
+    public static final String RECEIPT_SUFFIX = "csv";
     public boolean initialized = false; // true when Order is first called
     
     public String loadingSheetNumber;
