@@ -98,10 +98,7 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
         switch (v.getId()) {
         case R.id.btn_clear_all:
             Log.d(TAG, "Clear All button is clicked");
-            for (Product product: globals.products) {
-                product.loaded = false;
-                product.stock = 0;
-            }
+            globals.clearLoading();
             updateProductTable();
             break;
         case R.id.btn_topmenu:
@@ -162,6 +159,7 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
            if (resultCode == RESULT_OK) {
                String filename = data.getStringExtra("filename");
                Log.d(TAG, "onActivityResult: filename = " + filename);
+               globals.clearLoading();
                loadStockData(filename);
                updateProductTable();
            }

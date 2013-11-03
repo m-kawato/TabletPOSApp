@@ -181,4 +181,11 @@ public class Globals extends Application {
         }
     }
 
+    // Clear loading/stock states
+    public void clearLoading() {
+        for (Product product: this.products) {
+            product.loaded = false;
+            product.stock = 0;
+        }
+    }
 }
