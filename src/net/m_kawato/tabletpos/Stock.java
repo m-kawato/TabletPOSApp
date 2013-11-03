@@ -6,6 +6,7 @@ import java.util.List;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.text.Editable;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -18,7 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class Stock extends Activity implements TextView.OnEditorActionListener, View.OnClickListener {
+public class Stock extends Activity implements TextView.OnEditorActionListener, View.OnClickListener, View.OnFocusChangeListener {
     private static final String TAG = "Stock";
     private Globals globals;
     private List<Product> stockList;
@@ -48,7 +49,7 @@ public class Stock extends Activity implements TextView.OnEditorActionListener, 
         stockListView.addHeaderView(header);
         stockListView.addFooterView(footer);
 
-        this.stockListAdapter = new StockListAdapter(this, this.stockList, this, this);
+        this.stockListAdapter = new StockListAdapter(this, this.stockList);
         stockListView.setAdapter(this.stockListAdapter);
 
         // Event handlers of buttons (Top Menu, Loading)
@@ -112,6 +113,22 @@ public class Stock extends Activity implements TextView.OnEditorActionListener, 
         return true;  
     }
 
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (v.getId() == R.id.stock) {
+            EditText stockView = (EditText) v;
+            int position = (Integer) v.getTag();
+            Log.d(TAG, String.format("onFocusChange: position=%d, hasFocus=%b",
+                    position, hasFocus));
+            Product p = this.stockList.get(position);
+            if (hasFocus && p.stock == 0) {
+                stockView.setText("");
+            } else if (!hasFocus && p.stock == 0) {
+                stockView.setText("0");                
+            }
+        }
+    }
+
     // Update stock for product
     private void updateStock(EditText stockView, int position) {
         Log.d(TAG, String.format("updateStock: position = %d", position));
@@ -123,4 +140,8 @@ public class Stock extends Activity implements TextView.OnEditorActionListener, 
         }
         this.stockListAdapter.notifyDataSetChanged();
     }
+
+
+
+
 }

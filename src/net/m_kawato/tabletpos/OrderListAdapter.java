@@ -20,18 +20,12 @@ import android.widget.TextView;
 
 public class OrderListAdapter extends BaseAdapter {
     private static final String TAG = "OrderListAdapter";
-    private Context context;
+    private Confirm confirmActivity;
     private List<OrderItem> orderItemList;
-    private TextView.OnEditorActionListener onEditorActionListener;
-    private View.OnClickListener onClickListener;
     
-    public OrderListAdapter(Context context, List<OrderItem> orderItemList,
-            TextView.OnEditorActionListener onEditorActionListener,
-            View.OnClickListener onClickListener) {
-        this.context = context;
+    public OrderListAdapter(Confirm confirmActivity, List<OrderItem> orderItemList) {
+        this.confirmActivity = confirmActivity;
         this.orderItemList = orderItemList;
-        this.onEditorActionListener = onEditorActionListener;
-        this.onClickListener = onClickListener;
     }  
 
     @Override
@@ -54,7 +48,7 @@ public class OrderListAdapter extends BaseAdapter {
         Log.d(TAG, "getView");
         View view = convertView;
         if (view == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) confirmActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.confirm_item, null);
         }
         OrderItem orderItem = this.orderItemList.get(position);
@@ -86,9 +80,10 @@ public class OrderListAdapter extends BaseAdapter {
         EditText quantityView = (EditText) view.findViewById(R.id.quantity);
         quantityView.setText(Integer.toString(orderItem.quantity));
         quantityView.setTag(position);
-        quantityView.setOnEditorActionListener(this.onEditorActionListener);
+        quantityView.setOnEditorActionListener(this.confirmActivity);
+        quantityView.setOnFocusChangeListener(this.confirmActivity);
         Button buttonView = (Button) view.findViewById(R.id.btn_update_quantity);
-        buttonView.setOnClickListener(this.onClickListener);
+        buttonView.setOnClickListener(this.confirmActivity);
         TextView amountView = (TextView) view.findViewById(R.id.amount);
         amountView.setText(orderItem.getFormattedAmount());
         return view;

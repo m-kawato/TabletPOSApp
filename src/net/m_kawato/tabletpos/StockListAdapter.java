@@ -20,28 +20,22 @@ import android.widget.TextView;
 
 public class StockListAdapter extends BaseAdapter {
     private static final String TAG = "StockListAdapter";
-    private Context context;
-    private List<Product> productList;
-    private TextView.OnEditorActionListener onEditorActionListener;
-    private View.OnClickListener onClickListener;
+    private Stock stockActivity;
+    private List<Product> stockList;
 
-    public StockListAdapter(Context context, List<Product> productList,
-            TextView.OnEditorActionListener onEditorActionListener,
-            View.OnClickListener onClickListener) {
-        this.context = context;
-        this.productList = productList;
-        this.onEditorActionListener = onEditorActionListener;
-        this.onClickListener = onClickListener;
+    public StockListAdapter(Stock stockActivity, List<Product> stockList) {
+        this.stockActivity = stockActivity;
+        this.stockList = stockList;
     }
     
     @Override
     public int getCount() {
-        return this.productList.size();
+        return this.stockList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return this.productList.get(position);
+        return this.stockList.get(position);
     }
 
     @Override
@@ -53,10 +47,10 @@ public class StockListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         if (view == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) this.stockActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.stock_item, null);
         }
-        Product p = this.productList.get(position);
+        Product p = this.stockList.get(position);
         TextView productNameView = (TextView) view.findViewById(R.id.product_name);
         productNameView.setText(String.format("%d, %s", p.productId, p.productName));
         String imgFilePath =
@@ -78,9 +72,10 @@ public class StockListAdapter extends BaseAdapter {
         EditText stockView = (EditText) view.findViewById(R.id.stock);
         stockView.setText(Integer.toString(p.stock));
         stockView.setTag(position);
-        stockView.setOnEditorActionListener(this.onEditorActionListener);
+        stockView.setOnEditorActionListener(this.stockActivity);
+        stockView.setOnFocusChangeListener(this.stockActivity);
         Button buttonView = (Button) view.findViewById(R.id.btn_update_stock);
-        buttonView.setOnClickListener(this.onClickListener);
+        buttonView.setOnClickListener(this.stockActivity);
         return view;
     }
 

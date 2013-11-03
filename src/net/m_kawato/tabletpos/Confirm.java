@@ -12,7 +12,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,9 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.TextView.OnEditorActionListener;
 
-public class Confirm extends Activity implements OnClickListener, OnEditorActionListener {
+public class Confirm extends Activity implements TextView.OnEditorActionListener, View.OnClickListener, View.OnFocusChangeListener {
     private static final String TAG = "Confirm";
     private Globals globals;
     private OrderListAdapter orderListAdapter;
@@ -57,7 +55,7 @@ public class Confirm extends Activity implements OnClickListener, OnEditorAction
             this.orderItemList.add(orderItem);
         }
 
-        this.orderListAdapter = new OrderListAdapter(this, this.orderItemList, this, this);
+        this.orderListAdapter = new OrderListAdapter(this, this.orderItemList);
         orderListView.setAdapter(this.orderListAdapter);        
 
         // Loading sheet number
@@ -147,6 +145,23 @@ public class Confirm extends Activity implements OnClickListener, OnEditorAction
         }        
     } 
 
+    
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (v.getId() == R.id.quantity) {
+            EditText quantityView = (EditText) v;
+            int position = (Integer) v.getTag();
+            Log.d(TAG, String.format("onFocusChange: position=%d, hasFocus=%b",
+                    position, hasFocus));
+            OrderItem orderItem = this.orderItemList.get(position);
+            if (hasFocus && orderItem.quantity == 0) {
+                quantityView.setText("");
+            } else if (!hasFocus && orderItem.quantity == 0) {
+                quantityView.setText("0");                
+            }
+        }
+    }
+    
     // Update TextView for credit amount
     private void updateCreditAmount(EditText creditAmountView) {
         BigDecimal creditAmount = null;
@@ -205,4 +220,6 @@ public class Confirm extends Activity implements OnClickListener, OnEditorAction
         TextView cashAmountView = (TextView) findViewById(R.id.cash_amount);
         cashAmountView.setText(globals.transaction.getFormattedCashAmount());        
     }
+
+
 }
