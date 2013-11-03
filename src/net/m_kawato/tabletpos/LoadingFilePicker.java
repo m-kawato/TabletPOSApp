@@ -33,7 +33,10 @@ public class LoadingFilePicker extends Activity implements AdapterView.OnItemCli
         // Build ListView of files/directories
         this.fileListItems = new ArrayList<FileListItem>();
         for(File file: filelist) {
-            this.fileListItems.add(new FileListItem(file));
+            String filename = file.getName();
+            if (filename.matches("(?i)^" + Globals.LOADINGDATA_PREFIX + ".*\\." + Globals.LOADINGDATA_SUFFIX + "$")) {
+                this.fileListItems.add(new FileListItem(file));
+            }
         }
         Collections.sort(fileListItems);
         ArrayAdapter<FileListItem> adapter = new ArrayAdapter<FileListItem>(this, R.layout.filelist_item, this.fileListItems);
