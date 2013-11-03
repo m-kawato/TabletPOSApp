@@ -15,6 +15,14 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:windowTitleStyle">@style/WindowTitle</item>  
+        <item name="android:windowTitleSize">35dp</item>  
+    </style>
+
+    <style name="WindowTitle">
+        <item name="android:textColor">#ffffff</item>  
+        <item name="android:textSize">25sp</item>
+        <item name="android:textStyle">bold</item>  
     </style>
 
 </resources>
