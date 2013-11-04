@@ -7,87 +7,101 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
-    
-    <LinearLayout 
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
         <!-- loading sheet number -->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical" >
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
-   		        android:text="@string/loading_sheet_number_label"
-   		        android:textAppearance="?android:attr/textAppearanceMedium" />
-	        <TextView
-	            android:id="@+id/loading_sheet_number"
-	            android:layout_width="120dp"
-	            android:layout_height="wrap_content"
-	            android:layout_marginLeft="7dp"
-	            android:textAppearance="?android:attr/textAppearanceMedium" />
-        </LinearLayout>    
+                android:text="@string/loading_sheet_number_label"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/loading_sheet_number"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7dp"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
 
         <!-- Date, route and place -->
-        <TableLayout
-    	    android:layout_width="match_parent"
-   		    android:layout_height="wrap_content" >
-   		    <TableRow>
-   		        <TextView
-   		            android:layout_width="wrap_content"
-       		        android:layout_height="wrap_content"
-   	    	        android:paddingRight="10dp"
-   		            android:text="@string/date_label"
-   		            android:textAppearance="?android:attr/textAppearanceMedium" />
-       		    <TextView
-   	    	        android:id="@+id/date"
-   		            android:layout_width="wrap_content"
-   		            android:layout_height="wrap_content"
-   		            android:textAppearance="?android:attr/textAppearanceMedium" />
-            </TableRow>
-      	    <TableRow>
-   		        <TextView
-       		        android:layout_width="wrap_content"
-   	    	        android:layout_height="wrap_content"
-   		            android:paddingRight="10dp"
-   		            android:text="@string/route_label"
-   		            android:textAppearance="?android:attr/textAppearanceMedium" />
-   		        <TextView
-   		            android:id="@+id/route"
-   		            android:layout_width="wrap_content"
-       		        android:layout_height="wrap_content"
-   		            android:textAppearance="?android:attr/textAppearanceMedium" />
-      	    </TableRow>
 
-      	    <TableRow>
-      	        <TextView
-   		            android:layout_width="wrap_content"
-       		        android:layout_height="wrap_content"
-   	    	        android:paddingRight="10dp"
-   		            android:text="@string/place_label"
-   		            android:textAppearance="?android:attr/textAppearanceMedium" />
-       		    <TextView
-   	    	        android:id="@+id/place"
-   		            android:layout_width="wrap_content"
-   		            android:layout_height="wrap_content"
-   		            android:textAppearance="?android:attr/textAppearanceMedium" />
-          	</TableRow>
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:text="@string/date_label"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:text="@string/route_label"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/route"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:text="@string/place_label"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/place"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </TableRow>
         </TableLayout>
 
         <!-- Attribute labels -->
+
         <include layout="@layout/receipt_attribute_labels" />
-        
-        <View 
-            android:layout_width="match_parent" 
+
+        <View
+            android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="@android:color/darker_gray" />
-    
+
         <!-- Current order (place holder) -->
+
         <LinearLayout
             android:id="@+id/current_order"
             android:layout_width="match_parent"
@@ -95,12 +109,77 @@
             android:orientation="vertical" />
 
         <!-- Total amount, credit amount and cash amount -->
-        <include layout="@layout/receipt_footer" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@android:color/darker_gray" />
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/total_amount_label"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/total_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="7dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/credit_amount_label"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/credit_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="7dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cash_amount_label"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/cash_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="7dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black" />
+            </TableRow>
+        </TableLayout>
 
         <!-- "Confirm" and "Export" buttons -->
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
             android:layout_marginTop="25dp" >
 
             <Button
@@ -110,9 +189,9 @@
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="20dp"
                 android:drawableLeft="@drawable/arrow_left"
+                android:drawablePadding="10dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="20dp"
-                android:drawablePadding="10dp"
                 android:text="@string/confirm" />
 
             <Button
@@ -133,18 +212,20 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="20dp"
                 android:drawableLeft="@android:drawable/ic_menu_save"
+                android:drawablePadding="10dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="20dp"
-                android:drawablePadding="10dp"
                 android:text="@string/complete" />
         </RelativeLayout>
 
         <!-- Past orders (place holder) -->
+
         <LinearLayout
             android:id="@+id/past_orders"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/past_order_background"
             android:orientation="vertical" />
-        
     </LinearLayout>
+
 </ScrollView>

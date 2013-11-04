@@ -2,50 +2,52 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
+    android:layout_marginBottom="30dp"
     android:orientation="vertical" >
 
-    <View 
-        android:layout_width="match_parent" 
+    <View
+        android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@android:color/darker_gray" />
-    
+
     <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
         <TableRow>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-   		        android:textColor="@android:color/black"
                 android:text="@string/total_amount_label"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
 
             <TextView
                 android:id="@+id/total_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="7dp"
-   		        android:textColor="@android:color/black"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
         </TableRow>
 
         <TableRow>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-   		        android:textColor="@android:color/black"
                 android:text="@string/credit_amount_label"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
 
             <TextView
                 android:id="@+id/credit_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="7dp"
-   		        android:textColor="@android:color/black"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
         </TableRow>
 
         <TableRow>
@@ -53,17 +55,27 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-   		        android:textColor="@android:color/black"
                 android:text="@string/cash_amount_label"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
 
             <TextView
                 android:id="@+id/cash_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="7dp"
-   		        android:textColor="@android:color/black"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black" />
         </TableRow>
-</TableLayout>
+    </TableLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/darker_gray" />
+
+   <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="@color/white" />
 </LinearLayout>
