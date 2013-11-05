@@ -273,10 +273,15 @@ public class Loading extends Activity implements View.OnClickListener, AdapterVi
             String[] lineSplit = lines.get(i).split("\\s*?,\\s*?");
             int productId = -1;
             int stock = -1;
+            if (lineSplit.length != 3) {
+                Log.d(TAG, "Illegal line: " + lines.get(i));
+                continue;
+            }
             try {
                 productId = Integer.parseInt(lineSplit[1]);
                 stock = Integer.parseInt(lineSplit[2]);
             } catch (NumberFormatException e) {
+                Log.d(TAG, "NumberFormatException: " + lines.get(i));
                 continue;
             }
             Product p = globals.getProduct(productId);
