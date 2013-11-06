@@ -1,7 +1,9 @@
 package net.m_kawato.tabletpos;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,7 +23,7 @@ public class Globals extends Application {
     private static final String TAG = "Globals";
     private static final String SAVED_VALUES = "saved_values";
     private static final String KEY_LOADING_SHEET_NUMBER = "LoadingSheetNumber";
-    private static final String KEY_TRANSACTION_ID = "TransactionId";  
+    //private static final String KEY_TRANSACTION_ID = "TransactionId";  
     public static final String SDCARD_DIRNAME = "TabletPOSApp";
     public static final String IMAGE_DIRNAME = "images";
     public static final String PRODUCT_IMAGE_PREFIX = "product";
@@ -33,7 +37,6 @@ public class Globals extends Application {
     public boolean initialized = false; // true when Order is first called
     
     public String loadingSheetNumber;
-    public long transactionId;
     public List<Product> products = new ArrayList<Product>();
     @SuppressLint("UseSparseArrays")
     private Map<Integer, Product> productMap = new HashMap<Integer, Product>(); // map[productId -> product]
@@ -46,6 +49,8 @@ public class Globals extends Application {
     public Transaction transaction;
     public int selectedRoute;
     public int selectedPlace;
+    private File sdcardDir = null;
+    private File receiptFile = null;
 
     public void initialize() {
         if (this.products != null) {
@@ -145,20 +150,8 @@ public class Globals extends Application {
         Toast.makeText(this, "Loading sheet number has been recorded.", Toast.LENGTH_LONG).show();
     }
 
-    public void loadTransactionId() {
-        SharedPreferences preferences = getSharedPreferences(SAVED_VALUES, Context.MODE_PRIVATE);
-        long value = preferences.getLong(KEY_TRANSACTION_ID, 0);
-        this.transactionId = value;
-        Log.d(TAG, "loadTransactionId: value = " + value);
-    }
-
-    public void incrTransactionId() {
-        this.transactionId++;
-        this.transaction = new Transaction(this, transactionId, null, null, new BigDecimal(0));
-        SharedPreferences preferences = getSharedPreferences(SAVED_VALUES, Context.MODE_PRIVATE);
-        Editor editor = preferences.edit();
-        editor.putLong(KEY_TRANSACTION_ID, this.transactionId);
-        editor.commit();
+    public void initTransaction() {
+        this.transaction = new Transaction(this, null, null, new BigDecimal(0));
     }
 
     public void printRouteNames() {
@@ -190,5 +183,30 @@ public class Globals extends Application {
             product.loaded = false;
             product.stock = 0;
         }
+    }
+    
+    // get File object for the sdcard directory of this application
+    public File getSdcardDir() {
+        if (this.sdcardDir != null) {
+            return this.sdcardDir;
+        }
+        String sdcardPath = Environment.getExternalStorageDirectory().getPath();
+        String dirname = String.format("%s/%s", sdcardPath, Globals.SDCARD_DIRNAME);
+        this.sdcardDir = new File(dirname);
+        return this.sdcardDir;
+    }
+
+    // get File object for receipt file
+    public File getReceiptFile() {
+        if (this.receiptFile != null) {
+            return this.receiptFile;
+        }
+
+        String filename = String.format("%s/%s_%s.%s", getSdcardDir().getPath(),
+                Globals.RECEIPT_PREFIX,
+                DateFormat.format("dd_MM_yyyy", Calendar.getInstance()).toString(),
+                Globals.RECEIPT_SUFFIX);
+        this.receiptFile = new File(filename);
+        return this.receiptFile;
     }
 }

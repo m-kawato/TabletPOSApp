@@ -8,15 +8,15 @@ import android.content.Context;
 
 public class Transaction {
     private Context context;
-    public long transactionId;
+    //public long transactionId;
     public String routeCode;
     public String placeCode;
     public BigDecimal creditAmount;
     public List<OrderItem> orderItems = new ArrayList<OrderItem>();
 
-    public Transaction(Context context, long transactionId, String routeCode, String placeCode, BigDecimal creditAmount) {
+    public Transaction(Context context, String routeCode, String placeCode, BigDecimal creditAmount) {
         this.context = context;
-        this.transactionId = transactionId;
+        //this.transactionId = transactionId;
         this.routeCode = routeCode;
         this.placeCode = placeCode;
         this.creditAmount = creditAmount;

@@ -35,7 +35,7 @@ public class Confirm extends Activity implements TextView.OnEditorActionListener
         OrderInputHelper orderInputHelper = new OrderInputHelper(this, globals);
 
         // Set transaction data in globals
-        globals.transaction.clearOrderItems();
+        globals.initTransaction();
         for (Product p: globals.products) {
             if (p.orderItem != null) {
                 globals.transaction.addOrderItem(p.orderItem);

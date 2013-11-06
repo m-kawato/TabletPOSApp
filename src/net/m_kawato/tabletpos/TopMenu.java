@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -39,8 +38,6 @@ public class TopMenu extends Activity implements OnClickListener {
         globals = (Globals) this.getApplication();
         if (!globals.initialized) {
             globals.loadLoadingSheetNumber();
-            globals.loadTransactionId();
-            globals.incrTransactionId();
             loadProductData();
             loadPlaceData();
             globals.initialized = true;
@@ -88,9 +85,7 @@ public class TopMenu extends Activity implements OnClickListener {
         if (globals.categories != null && globals.categories.size() != 0) {
             return;
         }
-        String sdcardPath = Environment.getExternalStorageDirectory().getPath();
-        String dirname = String.format("%s/%s", sdcardPath, Globals.SDCARD_DIRNAME);
-        String productsFilename = String.format("%s/%s", dirname, Globals.PRODUCTS_FILENAME);
+        String productsFilename = String.format("%s/%s", globals.getSdcardDir().getPath(), Globals.PRODUCTS_FILENAME);
         globals.categories = new ArrayList<String>();
         List<String> lines = new ArrayList<String>();
         try {
@@ -179,9 +174,7 @@ public class TopMenu extends Activity implements OnClickListener {
         if (globals.routes != null && globals.routes.size() != 0) {
             return;
         }
-        String sdcardPath = Environment.getExternalStorageDirectory().getPath();
-        String dirname = String.format("%s/%s", sdcardPath, Globals.SDCARD_DIRNAME);
-        String placesFilename = String.format("%s/%s", dirname, Globals.PLACES_FILENAME);
+        String placesFilename = String.format("%s/%s", globals.getSdcardDir().getPath(), Globals.PLACES_FILENAME);
         globals.routes = new ArrayList<String>(); 
         globals.places = new HashMap<String, List<String>>();
         globals.routeName = new HashMap<String, String>();

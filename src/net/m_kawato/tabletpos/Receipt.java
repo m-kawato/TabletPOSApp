@@ -1,23 +1,25 @@
 package net.m_kawato.tabletpos;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -130,11 +132,11 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
 
             // export receipt to file and DB
             exportReceiptFile();
-            exportReceiptDb();
+            //exportReceiptDb();
 
             // reset order status and return to Order page
             globals.initialize();
-            globals.incrTransactionId();
+            //globals.incrTransactionId();
             Intent i = new Intent(this, Order.class);
             startActivity(i);
             break;
@@ -148,14 +150,9 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
     private void exportReceiptFile() {
         Log.d(TAG, "exportReceiptFile");
 
-        String sdcardPath = Environment.getExternalStorageDirectory().getPath();
-        String dirname = String.format("%s/%s", sdcardPath, Globals.SDCARD_DIRNAME);
-        String filename = String.format("%s/%s_%s.%s", dirname,
-                Globals.RECEIPT_PREFIX,
-                DateFormat.format("dd_MM_yyyy", Calendar.getInstance()).toString(),
-                Globals.RECEIPT_SUFFIX);
         String timestamp = DateFormat.format("dd-MM-yyyy kk:mm", Calendar.getInstance()).toString();
-        Log.d(TAG, String.format("exportReceipt: filename=%s, timestamp=%s", filename, timestamp));
+        Log.d(TAG, String.format("exportReceipt: filename=%s, timestamp=%s",
+                globals.getReceiptFile().getPath(), timestamp));
 
         String routeCode = globals.routes.get(globals.selectedRoute);
         String routeName = globals.routeName.get(routeCode);
@@ -164,16 +161,16 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
         
         PrintWriter writer = null;
         try {
-            File dir = new File(dirname);
+            File dir = globals.getSdcardDir();
             if (! dir.exists()) {
                 dir.mkdirs();  
             }
-            File outfile = new File(filename);
+            File outfile = globals.getReceiptFile();
             String header = null;
             if (! outfile.exists()) {
                 header = "Sale Date,Route Name,Route Code,RRP Name,RRP Code,Credit Amount,Product Name,Product Code,Quantity,Loading Sheet Number";
             }
-            FileOutputStream fout = new FileOutputStream(filename, true);
+            FileOutputStream fout = new FileOutputStream(outfile, true);
             writer = new PrintWriter(fout);
             if (header != null) {
                 writer.println(header);
@@ -200,45 +197,6 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
         } finally {
             writer.close();
         }  
-    }
-
-    // Insert/update receipt to SQLite DB
-    private void exportReceiptDb() {
-        Log.d(TAG, "exportReceiptDb");
-        PosDbHelper dbHelper = new PosDbHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        String routeCode = globals.routes.get(globals.selectedRoute);
-        String placeCode = globals.places.get(routeCode).get(globals.selectedPlace);
-
-        // delete the old order with the current transaction ID
-        String deleteOrder = "DELETE FROM orders WHERE transaction_id = ?";
-        db.execSQL(deleteOrder, new String[] {Long.toString(globals.transactionId)});
-        
-        // insert the latest order
-        String insertOrder = "INSERT INTO orders " +
-                " (transaction_id, loading_sheet_number, route, place, product_id, quantity, credit) " +
-                " VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-        boolean firstItem = true;
-        for (OrderItem orderItem: globals.transaction.orderItems) {
-            String creditAmountText = null;
-            if (firstItem) {
-                creditAmountText = globals.transaction.creditAmount.toString();
-                firstItem = false;
-            } else {
-                creditAmountText = "0";
-            }
-            db.execSQL(insertOrder, new String[] {
-                    Long.toString(globals.transactionId),
-                    globals.loadingSheetNumber,
-                    routeCode,
-                    placeCode,
-                    Integer.toString(orderItem.product.productId),
-                    Integer.toString(orderItem.quantity),
-                    creditAmountText});
-        }
-        Log.d(TAG, "writeReceiptToDb completed");
     }
 
     // Build current order list
@@ -278,40 +236,59 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
 
     // Build past order list
     private void buildPastOrderList() {
-        PosDbHelper dbHelper = new PosDbHelper(this);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        // Read transaction DB and build map: transactionId -> transaction  
-        Cursor c = db.rawQuery(
-                "SELECT transaction_id, route, place, product_id, quantity, credit "
-                + "FROM orders "
-                + "WHERE transaction_id != ? AND loading_sheet_number = ? "
-                + "ORDER BY product_id ASC",
-                new String[] {Long.toString(globals.transactionId), globals.loadingSheetNumber});
-        c.moveToFirst();
-
-        Map<Long, Transaction> transactionMap = new HashMap<Long, Transaction>();
-        for (int i = 0; i < c.getCount(); i++) {
-            long transactionId = c.getLong(0);
-            String routeCode = c.getString(1);
-            String placeCode = c.getString(2);
-            int productId = c.getInt(3);
-            int quantity = c.getInt(4);
-            BigDecimal creditAmount = new BigDecimal(c.getString(5));
-            OrderItem orderItem = new OrderItem(this, globals.getProduct(productId), quantity);
-            Log.d(TAG, String.format("buildPastOrderList: productId=%d, orderItem=%s",
-                    productId, orderItem.toString()));
-            Transaction transaction = transactionMap.get(transactionId);
-            if (transaction == null) {
-                transaction = new Transaction(this, transactionId, routeCode, placeCode, creditAmount);
-                transactionMap.put(transactionId, transaction);
-            } else if (transaction.creditAmount.compareTo(creditAmount) < 0) {
-                transaction.creditAmount = creditAmount;
+        // Read past transaction data from receipt file
+        List<String> lines = new ArrayList<String>();
+        FileInputStream fin = null;
+        try {
+            fin = new FileInputStream(globals.getReceiptFile());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
+            String line;
+            while((line = reader.readLine()) != null){     
+                lines.add(line);    
+            } 
+            fin.close();
+        } catch (IOException e) {
+            Log.e(TAG, "failed to read receipt from sdcard");
+            e.printStackTrace();
+        } finally {
+            if (fin != null) {
+                try {
+                    fin.close();
+                } catch (IOException e) {
+                }
             }
-            transaction.addOrderItem(orderItem);
-            c.moveToNext();
+        }  
+
+        Map<String, Transaction> transactionMap = new HashMap<String, Transaction>();
+        for(int i = 0; i < lines.size(); i++) {
+            String[] lineSplit = lines.get(i).split("\\s*?,\\s*?");
+            if (lineSplit.length != 10) {
+                Log.d(TAG, String.format("line skipped: %s, length=%d", lines.get(i), lineSplit.length));
+                continue;
+            }
+            try {
+                String timestamp = lineSplit[0];
+                String routeCode = lineSplit[2];
+                String placeCode = lineSplit[4];
+                int productId = Integer.parseInt(lineSplit[7]);
+                int quantity = Integer.parseInt(lineSplit[8]);
+                BigDecimal creditAmount = new BigDecimal(lineSplit[5]);
+                Log.d(TAG, String.format("buildPastOrderList: timestamp=%s,routeCode=%s,placeCode=%s,productId=%d,quantity=%d,creditAmount=%s",
+                        timestamp, routeCode, placeCode, productId, quantity, creditAmount.toString()));
+                OrderItem orderItem = new OrderItem(this, globals.getProduct(productId), quantity);
+                Transaction transaction = transactionMap.get(timestamp);
+                if (transaction == null) {
+                    transaction = new Transaction(this, routeCode, placeCode, creditAmount);
+                    transactionMap.put(timestamp, transaction);
+                } else if (transaction.creditAmount.compareTo(creditAmount) < 0) {
+                    transaction.creditAmount = creditAmount;
+                }
+                transaction.addOrderItem(orderItem);
+            } catch (NumberFormatException e) {
+                Log.d(TAG, "line skipped: " + lines.get(i));
+                continue;
+            }            
         }
-        c.close();
 
         // Build view for past orders
         LinearLayout placeHolder = (LinearLayout) findViewById(R.id.past_orders);
