@@ -20,6 +20,7 @@ public class Transaction {
         this.routeCode = routeCode;
         this.placeCode = placeCode;
         this.creditAmount = creditAmount;
+        this.creditAmount = new BigDecimal(0);
     }
 
     public void clearOrderItems() {

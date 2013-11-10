@@ -115,7 +115,7 @@ public class TopMenu extends Activity implements OnClickListener {
         }
 
         for(int i = 0; i < lines.size(); i++) {
-            String[] lineSplit = lines.get(i).split("\\s*?,\\s*?");
+            String[] lineSplit = lines.get(i).split("\\s*,\\s*");
             int productId = -1;
             try {
                 productId = Integer.parseInt(lineSplit[1]);
@@ -207,7 +207,7 @@ public class TopMenu extends Activity implements OnClickListener {
         }
 
         for(int i = 0; i < lines.size(); i++) {
-            String[] lineSplit = lines.get(i).split("\\s*?,\\s*?");
+            String[] lineSplit = lines.get(i).split("\\s*,\\s*");
             // skip comment line
             try {
                 Integer.parseInt(lineSplit[0]);

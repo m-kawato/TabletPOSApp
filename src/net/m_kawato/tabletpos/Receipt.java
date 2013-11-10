@@ -10,6 +10,8 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -260,8 +262,10 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
         }  
 
         Map<String, Transaction> transactionMap = new HashMap<String, Transaction>();
+        List<Transaction> transactionList = new ArrayList<Transaction>();
+
         for(int i = 0; i < lines.size(); i++) {
-            String[] lineSplit = lines.get(i).split("\\s*?,\\s*?");
+            String[] lineSplit = lines.get(i).split("\\s*,\\s*");
             if (lineSplit.length != 10) {
                 Log.d(TAG, String.format("line skipped: %s, length=%d", lines.get(i), lineSplit.length));
                 continue;
@@ -276,24 +280,36 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
                 Log.d(TAG, String.format("buildPastOrderList: timestamp=%s,routeCode=%s,placeCode=%s,productId=%d,quantity=%d,creditAmount=%s",
                         timestamp, routeCode, placeCode, productId, quantity, creditAmount.toString()));
                 OrderItem orderItem = new OrderItem(this, globals.getProduct(productId), quantity);
-                Transaction transaction = transactionMap.get(timestamp);
+                Transaction transaction = transactionMap.get(String.format("%s,%s,%s", timestamp, routeCode, placeCode));
                 if (transaction == null) {
                     transaction = new Transaction(this, routeCode, placeCode, creditAmount);
-                    transactionMap.put(timestamp, transaction);
-                } else if (transaction.creditAmount.compareTo(creditAmount) < 0) {
-                    transaction.creditAmount = creditAmount;
+                    transactionMap.put(String.format("%s,%s,%s", timestamp, routeCode, placeCode), transaction);
+                    transactionList.add(transaction);
                 }
+                transaction.creditAmount = transaction.creditAmount.add(creditAmount);
                 transaction.addOrderItem(orderItem);
             } catch (NumberFormatException e) {
                 Log.d(TAG, "line skipped: " + lines.get(i));
                 continue;
             }            
         }
-
+        Collections.reverse(transactionList);
+        
+        // Sort order items for each transaction by product name
+        // TODO: sort by category
+        for(Transaction t: transactionList) {
+            Collections.sort(t.orderItems, new Comparator<OrderItem>() {
+                @Override
+                public int compare(OrderItem a, OrderItem b) {
+                    return a.product.productName.compareTo(b.product.productName);
+                }
+            });            
+        }
+        
         // Build view for past orders
         LinearLayout placeHolder = (LinearLayout) findViewById(R.id.past_orders);
         LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        for(Transaction transaction: transactionMap.values()) {
+        for(Transaction transaction: transactionList) {
             // header (route and place)
             LinearLayout receiptHeader = (LinearLayout) inflater.inflate(R.layout.receipt_header, null);
             placeHolder.addView(receiptHeader);
@@ -310,7 +326,6 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
             boolean firstItem = true;
             for (OrderItem orderItem: transaction.orderItems) {
                 Product p = orderItem.product;
-                Log.d(TAG, "buildPastOrderList: p = " + p);
                 if (firstItem) {
                     firstItem = false;
                 } else {
