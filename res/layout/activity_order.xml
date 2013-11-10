@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="7dp"
                 android:imeOptions="actionGo"
-                android:inputType="numberDecimal" />
+                android:inputType="number" />
 
             <Button
                 android:id="@+id/btn_enter"
