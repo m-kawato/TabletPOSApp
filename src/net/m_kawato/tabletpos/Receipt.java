@@ -132,13 +132,11 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
             // modify stock for items contained in the receipt
             modifyStock();
 
-            // export receipt to file and DB
+            // export receipt to file
             exportReceiptFile();
-            //exportReceiptDb();
 
             // reset order status and return to Order page
             globals.initialize();
-            //globals.incrTransactionId();
             Intent i = new Intent(this, Order.class);
             startActivity(i);
             break;

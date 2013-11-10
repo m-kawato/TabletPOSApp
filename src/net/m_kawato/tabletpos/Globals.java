@@ -47,8 +47,8 @@ public class Globals extends Application {
     public Map<String, String> placeName; // Map[placeCode -> placeName]
 
     public Transaction transaction;
-    public int selectedRoute;
-    public int selectedPlace;
+    public int selectedRoute = 0;
+    public int selectedPlace = 0;
     private File sdcardDir = null;
     private File receiptFile = null;
 
@@ -58,8 +58,6 @@ public class Globals extends Application {
                 p.orderItem = null;
             }
         }
-        this.selectedRoute = 0;
-        this.selectedPlace = 0;
     }
     
     public void addCategory(String category) {
