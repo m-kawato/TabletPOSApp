@@ -296,12 +296,17 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
         Collections.reverse(transactionList);
         
         // Sort order items for each transaction by product name
-        // TODO: sort by category
         for(Transaction t: transactionList) {
             Collections.sort(t.orderItems, new Comparator<OrderItem>() {
                 @Override
-                public int compare(OrderItem a, OrderItem b) {
-                    return a.product.productName.compareTo(b.product.productName);
+                public int compare(OrderItem item_a, OrderItem item_b) {
+                    Product a = item_a.product;
+                    Product b = item_b.product;
+                    if (a.category.compareTo(b.category) != 0) {
+                        return a.category.compareTo(b.category);
+                    } else {
+                        return a.productName.compareTo(b.productName);
+                    }
                 }
             });            
         }
