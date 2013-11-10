@@ -2,6 +2,8 @@ package net.m_kawato.tabletpos;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
@@ -71,5 +73,21 @@ public class Transaction {
             }
         }
         this.orderItems = newOrderItems;
+    }
+    
+    // Sort order items by product category, product name
+    public void sortOrderItems() {
+        Collections.sort(this.orderItems, new Comparator<OrderItem>() {
+            @Override
+            public int compare(OrderItem item_a, OrderItem item_b) {
+                Product a = item_a.product;
+                Product b = item_b.product;
+                if (a.category.compareTo(b.category) != 0) {
+                    return a.category.compareTo(b.category);
+                } else {
+                    return a.productName.compareTo(b.productName);
+                }
+            }
+        });
     }
 }

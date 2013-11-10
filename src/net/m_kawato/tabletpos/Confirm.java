@@ -2,6 +2,8 @@ package net.m_kawato.tabletpos;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.os.Bundle;
@@ -41,6 +43,7 @@ public class Confirm extends Activity implements TextView.OnEditorActionListener
                 globals.transaction.addOrderItem(p.orderItem);
             }
         }
+        globals.transaction.sortOrderItems();          
 
         // Build ListView of order items
         ListView orderListView = (ListView) findViewById(R.id.list);
