@@ -35,8 +35,8 @@
     <string name="route">Route</string>
     <string name="place">Shop</string>
     <string name="product">Product</string>
-    <string name="unit_price">Unit Price</string>
-    <string name="unit_price_box">Price/Box</string>
+    <string name="unit_price">Unit Price\nwith Vat</string>
+    <string name="unit_price_box">Box Price\nwith Vat</string>
     <string name="quantity">Quantity</string>
     <string name="quantity_label">Quantity:</string>
     <string name="order_checked">Order</string>
