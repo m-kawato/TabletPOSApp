@@ -33,7 +33,9 @@ import android.widget.TextView;
 public class Order extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener {
     private static final String TAG = "Order";
     private Globals globals;
-    private List<String> categories; // category that contains at least one product with stocks
+    private List<String> categories;
+       // category that contains at least one product with stocks;
+       // the element with index 0 is 'ALL'
     private List<Product> productsInCategory; // products in the selected category
 
     @Override
@@ -60,6 +62,8 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         this.categories = new ArrayList<String>();
+        this.categories.add(Globals.CATEGORY_ALL);
+        categoryAdapter.add(Globals.CATEGORY_ALL);
         for(String category: globals.categories) {
             if (categoryContainsProduct(category)) {
                 this.categories.add(category);
@@ -184,11 +188,23 @@ public class Order extends Activity implements View.OnClickListener, AdapterView
     private void changeCategory(String category) {
         Log.d(TAG, String.format("changeCategory: %s", category));
         this.productsInCategory.clear();
-        for(Product product: globals.products) {
-            if (product.category.equals(category) && product.loaded && product.stock > 0) {
-                this.productsInCategory.add(product);
+
+        if (category.equals(Globals.CATEGORY_ALL)) {
+            for (String c: globals.categories) {
+                for (Product product: globals.products) {
+                    if (product.category.equals(c) && product.loaded && product.stock > 0) {
+                        this.productsInCategory.add(product);
+                    }
+                }
+            }
+        } else {
+            for (Product product : globals.products) {
+                if (product.category.equals(category) && product.loaded && product.stock > 0) {
+                    this.productsInCategory.add(product);
+                }
             }
         }
+
         buildProductTable();
     }
     

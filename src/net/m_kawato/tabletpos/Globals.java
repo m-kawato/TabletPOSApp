@@ -23,16 +23,16 @@ public class Globals extends Application {
     private static final String TAG = "Globals";
     private static final String SAVED_VALUES = "saved_values";
     private static final String KEY_LOADING_SHEET_NUMBER = "LoadingSheetNumber";
-    //private static final String KEY_TRANSACTION_ID = "TransactionId";  
-    public static final String SDCARD_DIRNAME = "TabletPOSApp";
-    public static final String IMAGE_DIRNAME = "images";
-    public static final String PRODUCT_IMAGE_PREFIX = "product";
-    public static final String PRODUCTS_FILENAME = "products.csv";
-    public static final String PLACES_FILENAME = "places.csv";
-    public static final String RECEIPT_PREFIX = "receipt";
-    public static final String RECEIPT_SUFFIX = "csv";
-    public static final String LOADINGDATA_PREFIX = "loadingdata_";
-    public static final String LOADINGDATA_SUFFIX = "csv";
+    static final String CATEGORY_ALL = "ALL";  
+    static final String SDCARD_DIRNAME = "TabletPOSApp";
+    static final String IMAGE_DIRNAME = "images";
+    static final String PRODUCT_IMAGE_PREFIX = "product";
+    static final String PRODUCTS_FILENAME = "products.csv";
+    static final String PLACES_FILENAME = "places.csv";
+    static final String RECEIPT_PREFIX = "receipt";
+    static final String RECEIPT_SUFFIX = "csv";
+    static final String LOADINGDATA_PREFIX = "loadingdata_";
+    static final String LOADINGDATA_SUFFIX = "csv";
     
     public boolean initialized = false; // true when Order is first called
     
@@ -138,12 +138,6 @@ public class Globals extends Application {
         Editor editor = preferences.edit();
         editor.putString(KEY_LOADING_SHEET_NUMBER, value);
         editor.commit();
-
-        // delete existing records from order table in SQLite DB
-        PosDbHelper dbHelper = new PosDbHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        String deleteOrder = "DELETE FROM orders";
-        db.execSQL(deleteOrder);
 
         Toast.makeText(this, "Loading sheet number has been recorded.", Toast.LENGTH_LONG).show();
     }
