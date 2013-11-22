@@ -17,6 +17,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -67,7 +70,7 @@ public class TopMenu extends Activity implements OnClickListener {
                 startActivity(i);
                 break;
             case R.id.btn_about:
-                // TODO define action for "About" button
+                showAbout();
                 break;
         }        
     }
@@ -252,5 +255,26 @@ public class TopMenu extends Activity implements OnClickListener {
                 
             });
         }
+    }
+
+    // Show About message
+    private void showAbout() {
+        String versionName = "";
+        try {
+            PackageManager packageManager = this.getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(
+                    this.getPackageName(), PackageManager.GET_ACTIVITIES);
+            versionName = packageInfo.versionName;
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("About");
+        builder.setMessage(String.format("%s\nVersion %s\nDeveloped by %s",
+                getString(R.string.app_name),
+                versionName,
+                getString(R.string.developer_name)));
+        builder.setPositiveButton(android.R.string.ok, null);
+        builder.show();
     }
 }
