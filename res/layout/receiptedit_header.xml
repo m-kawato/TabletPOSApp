@@ -10,7 +10,24 @@
         android:layout_marginBottom="5dp"
         android:background="@android:color/darker_gray" />
 
-  	<!-- Route and Shop -->
+    <!-- Edit button -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/btn_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:drawableLeft="@android:drawable/ic_menu_edit"
+            android:drawablePadding="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="20dp"
+            android:text="@string/edit" />
+    </RelativeLayout>
+
+    <!-- Route and Shop -->
     <include layout="@layout/receipt_route_shop" />
 
     <!-- Attribute labels -->

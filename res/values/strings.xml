@@ -16,6 +16,7 @@
     <string name="title_activity_stock">Stock</string>
     <string name="title_dialog_order_input">Order Input</string>
     <string name="title_dialog_credit_input">Credit Input</string>
+    <string name="title_activity_receipt_edit">ReceiptEdit</string>
     <string name="enter_order">Enter Order</string>
     <string name="enter_loading">Enter Loading</string>
     <string name="edit_receipt">Edit Receipt</string>
@@ -28,6 +29,7 @@
     <string name="topmenu">Top Menu</string>
     <string name="loading_sheet_number">Loading Sheet Number</string>
     <string name="enter">Enter</string>
+    <string name="edit">Edit</string>
     <string name="category">Category</string>
     <string name="order">Order</string>
     <string name="confirm">Confirm</string>
@@ -53,7 +55,5 @@
     <string name="credit_amount_label">Credit Amount:</string>
     <string name="cash_amount_label">Cash Amount:</string>
     <string name="product_image">Product Image</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="title_activity_receipt_edit">ReceiptEdit</string>
-
+    
 </resources>
