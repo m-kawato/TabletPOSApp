@@ -3,7 +3,7 @@
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
     <color name="past_order_background">#f0f0f0</color>
-    <color name="receiptedit_background">#f0fff0</color>
+    <color name="receiptedit_background">#fffff0</color>
   	<color name="order_item_background">#e8e8ff</color>
   	<color name="order_item_stock">#ff0000</color>
 </resources>
