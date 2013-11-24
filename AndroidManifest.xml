@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.m_kawato.tabletpos"
     android:versionCode="1"
-    android:versionName="0.3" >
+    android:versionName="0.4" >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -56,6 +56,10 @@
             android:name="net.m_kawato.tabletpos.LoadingFilePicker"
             android:label="@string/title_activity_loading_file_picker"
             android:screenOrientation="landscape" >
+        </activity>
+        <activity
+            android:name="net.m_kawato.tabletpos.ReceiptEdit"
+            android:label="@string/title_activity_receipt_edit" >
         </activity>
     </application>
 

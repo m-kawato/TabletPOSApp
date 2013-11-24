@@ -29,6 +29,13 @@
             android:text="@string/enter_loading" />
 
         <Button
+            android:id="@+id/btn_receiptedit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/edit_receipt" />
+
+        <Button
             android:id="@+id/btn_about"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
