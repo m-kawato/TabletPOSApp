@@ -35,13 +35,15 @@ public class Confirm extends Activity implements TextView.OnEditorActionListener
         OrderInputHelper orderInputHelper = new OrderInputHelper(this, globals);
 
         // Set transaction data in globals
-        globals.initTransaction();
-        for (Product p: globals.products) {
-            if (p.orderItem != null) {
+        if (globals.transaction == null) {
+            globals.initTransaction();
+        }
+        for (Product p : globals.products) {
+            if (p.orderItem != null && !globals.transaction.contains(p)) {
                 globals.transaction.addOrderItem(p.orderItem);
             }
         }
-        globals.transaction.sortOrderItems();          
+        globals.transaction.sortOrderItems();
 
         // Build ListView of order items
         ListView orderListView = (ListView) findViewById(R.id.list);

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,10 +17,12 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-public class ReceiptEdit extends Activity implements OnClickListener {
+public class ReceiptEdit extends Activity implements OnClickListener, DialogInterface.OnClickListener {
     private Globals globals;
     private static final String TAG = "ReceiptEdit";
     private ReceiptHelper receiptHelper;
+    private List<Transaction> transactionList;
+    private int selectedTransaction = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,7 @@ public class ReceiptEdit extends Activity implements OnClickListener {
         return true;
     }
 
+    // event handler for buttons
     @Override
     public void onClick(View v) {
         Intent i;
@@ -55,26 +59,62 @@ public class ReceiptEdit extends Activity implements OnClickListener {
             i = new Intent(this, TopMenu.class);
             startActivity(i);
             break;
+        case R.id.btn_edit:
+            Log.d(TAG, "Edit button is clicked");
+            this.selectedTransaction = (Integer) v.getTag();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Edit");
+            builder.setMessage("You are now going to load previous sales data for editing.\n" +
+              "If proceed, the sales data is deleted from the csv data.");
+            builder.setPositiveButton("Proceed", this);
+            builder.setNegativeButton(android.R.string.cancel, null);
+            builder.create().show();
+            break;
         }                
+    }
+
+    // event handler for AlertDialog 
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        if (which == android.content.DialogInterface.BUTTON_POSITIVE) {
+            Log.d(TAG, "onClick: BUTTON_POSITIVE");
+            loadPastOrder(this.transactionList.get(this.selectedTransaction));
+            Intent i = new Intent(this, Confirm.class);
+            startActivity(i);
+        }
     }
 
     // Build past order list
     private void buildPastOrderList() {
-        List<Transaction> transactionList = receiptHelper.getPastTransactionList();
+        this.transactionList = receiptHelper.getPastTransactionList();
         
         if (transactionList == null) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setMessage("There is no today's receipt");
             alertDialogBuilder.setPositiveButton("OK", null);
             alertDialogBuilder.create().show();
-            transactionList = new ArrayList<Transaction>();
+            this.transactionList = new ArrayList<Transaction>();
         }
         
         LinearLayout placeHolder = (LinearLayout) findViewById(R.id.past_orders);
         LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         
-        for(Transaction transaction: transactionList) {
-            receiptHelper.buildReceipView(placeHolder, transaction, inflater, R.layout.receiptedit_header);
+        int tag = 0;
+        for(Transaction transaction: this.transactionList) {
+            receiptHelper.buildReceipView(placeHolder, transaction, inflater, R.layout.receiptedit_header, tag);
+            tag++;
+        }
+    }
+
+    // Load past order
+    private void loadPastOrder(Transaction transaction) {
+        Log.d(TAG, "loadPastOrder");
+        
+        globals.initialize();
+        globals.transaction = transaction;
+
+        for(OrderItem orderItem: transaction.orderItems) {
+            orderItem.product.orderItem = orderItem;
         }
     }
 }

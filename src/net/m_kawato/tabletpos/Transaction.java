@@ -25,6 +25,15 @@ public class Transaction {
         this.creditAmount = new BigDecimal(0);
     }
 
+    public boolean contains(Product p) {
+        for(OrderItem orderItem: this.orderItems) {
+            if (orderItem.product.productId == p.productId) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public void clearOrderItems() {
         this.orderItems.clear();
     }

@@ -120,8 +120,8 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
     @Override
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {
-        case android.content.DialogInterface.BUTTON1:
-            Log.d(TAG, "onClick: BUTTON1");
+        case android.content.DialogInterface.BUTTON_POSITIVE:
+            Log.d(TAG, "onClick: BUTTON_POSITIVE");
 
             // modify stock for items contained in the receipt
             modifyStock();
@@ -134,7 +134,7 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
             Intent i = new Intent(this, Order.class);
             startActivity(i);
             break;
-        case android.content.DialogInterface.BUTTON2:
+        case android.content.DialogInterface.BUTTON_NEGATIVE:
             break;
         }
         

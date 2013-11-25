@@ -15,6 +15,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -99,9 +100,9 @@ public class ReceiptHelper {
 
     // build View of receipt
     public void buildReceipView(LinearLayout placeHolder, Transaction transaction,
-            LayoutInflater inflater, int headerView) {
+            LayoutInflater inflater, int headerView, int tag) {
 
-        // receipt header (route and place)
+        // receipt header (route, place, edit button)
 
         View receiptHeaderView = inflater.inflate(headerView, null);
         placeHolder.addView(receiptHeaderView);
@@ -114,6 +115,12 @@ public class ReceiptHelper {
         String placeName = globals.placeName.get(transaction.placeCode);
         TextView placeView = (TextView) receiptHeaderView.findViewById(R.id.place);
         placeView.setText(String.format("%s (%s)", placeName, transaction.placeCode));
+
+        if (headerView == R.layout.receiptedit_header) {
+            Button btnEdit = (Button) receiptHeaderView.findViewById(R.id.btn_edit);
+            btnEdit.setOnClickListener((ReceiptEdit) this.context);
+            btnEdit.setTag(tag);
+        }
 
         // order items
 
@@ -160,6 +167,11 @@ public class ReceiptHelper {
 
         TextView cashAmountView = (TextView) receiptFooter.findViewById(R.id.cash_amount);
         cashAmountView.setText(transaction.getFormattedCashAmount());
+    }
+
+    public void buildReceipView(LinearLayout placeHolder, Transaction transaction,
+            LayoutInflater inflater, int headerView) {
+        buildReceipView(placeHolder, transaction, inflater, headerView, 0);
     }
 
 }

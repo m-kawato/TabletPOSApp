@@ -58,8 +58,12 @@ public class Globals extends Application {
                 p.orderItem = null;
             }
         }
+        this.transaction = null;
     }
-    
+
+    public void initTransaction() {
+        this.transaction = new Transaction(this, null, null, new BigDecimal(0));
+    }
     public void addCategory(String category) {
         if (! this.categories.contains(category)) {
             this.categories.add(category);
@@ -140,10 +144,6 @@ public class Globals extends Application {
         editor.commit();
 
         Toast.makeText(this, "Loading sheet number has been recorded.", Toast.LENGTH_LONG).show();
-    }
-
-    public void initTransaction() {
-        this.transaction = new Transaction(this, null, null, new BigDecimal(0));
     }
 
     public void printRouteNames() {
