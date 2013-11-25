@@ -146,7 +146,7 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
 
         String timestamp = DateFormat.format("dd-MM-yyyy kk:mm", Calendar.getInstance()).toString();
         Log.d(TAG, String.format("exportReceipt: filename=%s, timestamp=%s",
-                globals.getReceiptFile().getPath(), timestamp));
+                receiptHelper.getReceiptFile().getPath(), timestamp));
 
         String routeCode = globals.routes.get(globals.selectedRoute);
         String routeName = globals.routeName.get(routeCode);
@@ -159,7 +159,7 @@ public class Receipt extends Activity implements View.OnClickListener, DialogInt
             if (! dir.exists()) {
                 dir.mkdirs();  
             }
-            File outfile = globals.getReceiptFile();
+            File outfile = receiptHelper.getReceiptFile();
             String header = null;
             if (! outfile.exists()) {
                 header = "Sale Date,Route Name,Route Code,RRP Name,RRP Code,Credit Amount,Product Name,Product Code,Quantity,Loading Sheet Number";

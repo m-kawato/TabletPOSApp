@@ -2,11 +2,13 @@ package net.m_kawato.tabletpos;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
+import android.text.format.DateFormat;
 
 public class Transaction {
     private Context context;
@@ -15,14 +17,17 @@ public class Transaction {
     public String placeCode;
     public BigDecimal creditAmount;
     public List<OrderItem> orderItems = new ArrayList<OrderItem>();
+    public String timestamp;
+    public String loadingSheetNumber;
 
-    public Transaction(Context context, String routeCode, String placeCode, BigDecimal creditAmount) {
+    public Transaction(Context context, String routeCode, String placeCode,
+            BigDecimal creditAmount, String loadingSheetNumber) {
         this.context = context;
-        //this.transactionId = transactionId;
         this.routeCode = routeCode;
         this.placeCode = placeCode;
         this.creditAmount = creditAmount;
         this.creditAmount = new BigDecimal(0);
+        this.loadingSheetNumber = loadingSheetNumber;
     }
 
     public boolean contains(Product p) {
@@ -71,6 +76,10 @@ public class Transaction {
     public String getFormattedCreditAmount() {
         return this.creditAmount.toString() + " " + context.getString(R.string.currency);
         
+    }
+
+    public void setTimeStamp() {
+        this.timestamp = DateFormat.format("dd-MM-yyyy kk:mm", Calendar.getInstance()).toString();
     }
 
     // Remove order item where quantity == 0

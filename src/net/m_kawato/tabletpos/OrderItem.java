@@ -7,11 +7,17 @@ public class OrderItem {
     private Context context;
     public Product product;
     public int quantity;
+    public int lineNumber = -1; // used for ReceiptEdit
     
     public OrderItem(Context context, Product product, int quantity) {
         this.context = context;
         this.product = product;
         this.quantity = quantity;
+    }
+
+    public OrderItem(Context context, Product product, int quantity, int lineNumber) {
+        this(context, product, quantity);
+        this.lineNumber = lineNumber;
     }
 
     public BigDecimal getAmount() {

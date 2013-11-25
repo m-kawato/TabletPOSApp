@@ -109,12 +109,20 @@ public class ReceiptEdit extends Activity implements OnClickListener, DialogInte
     // Load past order
     private void loadPastOrder(Transaction transaction) {
         Log.d(TAG, "loadPastOrder");
-        
+
         globals.initialize();
         globals.transaction = transaction;
-
+        List<Integer> linesToRemove = new ArrayList<Integer>();
+        
         for(OrderItem orderItem: transaction.orderItems) {
-            orderItem.product.orderItem = orderItem;
+            Product p = orderItem.product;
+            p.orderItem = orderItem;
+            p.stock += orderItem.quantity;
+            linesToRemove.add(orderItem.lineNumber);
         }
+
+        receiptHelper.removeOldOrder(linesToRemove);
+
+        
     }
 }

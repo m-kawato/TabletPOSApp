@@ -1,17 +1,21 @@
 package net.m_kawato.tabletpos;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,19 +28,22 @@ public class ReceiptHelper {
     private static final String TAG = "ReceiptHelper";
     private Context context;
     private Globals globals;
+    private File receiptFile = null;
+    private List<String> pastTransactionLines = null;
 
     public ReceiptHelper(Context context, Globals globals) {
         this.context = context;
         this.globals = globals;
     }
 
-    // get list of transaction information from receipt file 
+    // load list of transaction information from receipt file 
     public List<Transaction> getPastTransactionList() {
         // Read past transaction data from receipt file
         List<String> lines = new ArrayList<String>();
+        this.pastTransactionLines = lines;
         FileInputStream fin = null;
         try {
-            fin = new FileInputStream(globals.getReceiptFile());
+            fin = new FileInputStream(getReceiptFile());
             BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
             String line;
             while((line = reader.readLine()) != null){     
@@ -72,12 +79,13 @@ public class ReceiptHelper {
                 int productId = Integer.parseInt(lineSplit[7]);
                 int quantity = Integer.parseInt(lineSplit[8]);
                 BigDecimal creditAmount = new BigDecimal(lineSplit[5]);
+                String loadingSheetNumber = lineSplit[9];
                 Log.d(TAG, String.format("buildPastOrderList: timestamp=%s,routeCode=%s,placeCode=%s,productId=%d,quantity=%d,creditAmount=%s",
                         timestamp, routeCode, placeCode, productId, quantity, creditAmount.toString()));
-                OrderItem orderItem = new OrderItem(this.context, globals.getProduct(productId), quantity);
+                OrderItem orderItem = new OrderItem(this.context, globals.getProduct(productId), quantity, i);
                 Transaction transaction = transactionMap.get(String.format("%s,%s,%s", timestamp, routeCode, placeCode));
                 if (transaction == null) {
-                    transaction = new Transaction(this.context, routeCode, placeCode, creditAmount);
+                    transaction = new Transaction(this.context, routeCode, placeCode, creditAmount, loadingSheetNumber);
                     transactionMap.put(String.format("%s,%s,%s", timestamp, routeCode, placeCode), transaction);
                     transactionList.add(transaction);
                 }
@@ -174,4 +182,51 @@ public class ReceiptHelper {
         buildReceipView(placeHolder, transaction, inflater, headerView, 0);
     }
 
+    // get File object for receipt file
+    public File getReceiptFile() {
+        if (this.receiptFile != null) {
+            return this.receiptFile;
+        }
+
+        String filename = String.format("%s/%s_%s.%s", globals.getSdcardDir().getPath(),
+                Globals.RECEIPT_PREFIX,
+                DateFormat.format("dd_MM_yyyy", Calendar.getInstance()).toString(),
+                Globals.RECEIPT_SUFFIX);
+        this.receiptFile = new File(filename);
+        return this.receiptFile;
+    }
+
+    // Write header line to receipt csv
+    public void writeReceiptFileName(PrintWriter writer) {
+        writer.println("Sale Date,Route Name,Route Code,RRP Name,RRP Code,Credit Amount,Product Name,Product Code,Quantity,Loading Sheet Number");
+    }
+ 
+    // Write order items to receipt csv
+    public void writeOrderItems(PrintWriter writer, Transaction transaction) {
+        String routeName = globals.routeName.get(transaction.routeCode);
+        String placeName = globals.placeName.get(transaction.placeCode);
+
+        boolean firstItem = true;
+        for (OrderItem orderItem : transaction.orderItems) {
+            String creditAmountText = null;
+            if (firstItem) {
+                creditAmountText = globals.transaction.creditAmount.toString();
+                firstItem = false;
+            } else {
+                creditAmountText = "0";
+            }
+            writer.println(String.format("%s,%s,%s,%s,%s,%s,%s,%d,%d,%s",
+                    transaction.timestamp, routeName, transaction.routeCode, placeName, transaction.placeCode,
+                    creditAmountText, orderItem.product.productName,
+                    orderItem.product.productId, orderItem.quantity,
+                    transaction.loadingSheetNumber));
+        }
+    }
+
+    // Remove old order from receipt_*.csv
+
+    public void removeOldOrder(List<Integer> linesToRemove) {
+        List<String> lines = this.pastTransactionLines;
+        // TODO implementation of this method
+    }
 }

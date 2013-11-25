@@ -3,7 +3,6 @@ package net.m_kawato.tabletpos;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -50,7 +48,6 @@ public class Globals extends Application {
     public int selectedRoute = 0;
     public int selectedPlace = 0;
     private File sdcardDir = null;
-    private File receiptFile = null;
 
     public void initialize() {
         if (this.products != null) {
@@ -62,7 +59,7 @@ public class Globals extends Application {
     }
 
     public void initTransaction() {
-        this.transaction = new Transaction(this, null, null, new BigDecimal(0));
+        this.transaction = new Transaction(this, null, null, new BigDecimal(0), this.loadingSheetNumber);
     }
     public void addCategory(String category) {
         if (! this.categories.contains(category)) {
@@ -188,17 +185,4 @@ public class Globals extends Application {
         return this.sdcardDir;
     }
 
-    // get File object for receipt file
-    public File getReceiptFile() {
-        if (this.receiptFile != null) {
-            return this.receiptFile;
-        }
-
-        String filename = String.format("%s/%s_%s.%s", getSdcardDir().getPath(),
-                Globals.RECEIPT_PREFIX,
-                DateFormat.format("dd_MM_yyyy", Calendar.getInstance()).toString(),
-                Globals.RECEIPT_SUFFIX);
-        this.receiptFile = new File(filename);
-        return this.receiptFile;
-    }
 }
