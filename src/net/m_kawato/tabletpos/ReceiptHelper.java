@@ -29,11 +29,16 @@ public class ReceiptHelper {
     private Context context;
     private Globals globals;
     private File receiptFile = null;
+    private File temporaryReceiptFile = null;
     private List<String> pastTransactionLines = null;
 
     public ReceiptHelper(Context context, Globals globals) {
         this.context = context;
         this.globals = globals;
+    }
+
+    public List<String> getPastTransactionLines() {
+        return this.pastTransactionLines;
     }
 
     // load list of transaction information from receipt file 
@@ -184,49 +189,27 @@ public class ReceiptHelper {
 
     // get File object for receipt file
     public File getReceiptFile() {
-        if (this.receiptFile != null) {
-            return this.receiptFile;
+        if (this.receiptFile == null) {
+            String filename = String.format("%s/%s_%s.%s", globals.getSdcardDir().getPath(),
+                    Globals.RECEIPT_PREFIX,
+                    DateFormat.format("dd_MM_yyyy", Calendar.getInstance()).toString(),
+                    Globals.RECEIPT_SUFFIX);
+            this.receiptFile = new File(filename);
         }
 
-        String filename = String.format("%s/%s_%s.%s", globals.getSdcardDir().getPath(),
-                Globals.RECEIPT_PREFIX,
-                DateFormat.format("dd_MM_yyyy", Calendar.getInstance()).toString(),
-                Globals.RECEIPT_SUFFIX);
-        this.receiptFile = new File(filename);
         return this.receiptFile;
     }
 
-    // Write header line to receipt csv
-    public void writeReceiptFileName(PrintWriter writer) {
-        writer.println("Sale Date,Route Name,Route Code,RRP Name,RRP Code,Credit Amount,Product Name,Product Code,Quantity,Loading Sheet Number");
+    public File getTemporaryReceiptFile() {
+        if (this.temporaryReceiptFile == null) {
+            String filename = String.format("%s/%s_%s_tmp.%s", globals
+                    .getSdcardDir().getPath(), Globals.RECEIPT_PREFIX,
+                    DateFormat.format("dd_MM_yyyy", Calendar.getInstance())
+                            .toString(), Globals.RECEIPT_SUFFIX);
+            this.temporaryReceiptFile = new File(filename);
+        }
+        return this.temporaryReceiptFile;
+
     }
  
-    // Write order items to receipt csv
-    public void writeOrderItems(PrintWriter writer, Transaction transaction) {
-        String routeName = globals.routeName.get(transaction.routeCode);
-        String placeName = globals.placeName.get(transaction.placeCode);
-
-        boolean firstItem = true;
-        for (OrderItem orderItem : transaction.orderItems) {
-            String creditAmountText = null;
-            if (firstItem) {
-                creditAmountText = globals.transaction.creditAmount.toString();
-                firstItem = false;
-            } else {
-                creditAmountText = "0";
-            }
-            writer.println(String.format("%s,%s,%s,%s,%s,%s,%s,%d,%d,%s",
-                    transaction.timestamp, routeName, transaction.routeCode, placeName, transaction.placeCode,
-                    creditAmountText, orderItem.product.productName,
-                    orderItem.product.productId, orderItem.quantity,
-                    transaction.loadingSheetNumber));
-        }
-    }
-
-    // Remove old order from receipt_*.csv
-
-    public void removeOldOrder(List<Integer> linesToRemove) {
-        List<String> lines = this.pastTransactionLines;
-        // TODO implementation of this method
-    }
 }

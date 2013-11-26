@@ -1,5 +1,9 @@
 package net.m_kawato.tabletpos;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +20,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
-public class ReceiptEdit extends Activity implements OnClickListener, DialogInterface.OnClickListener {
+public class ReceiptEdit extends Activity implements OnClickListener {
     private Globals globals;
     private static final String TAG = "ReceiptEdit";
     private ReceiptHelper receiptHelper;
@@ -66,32 +71,34 @@ public class ReceiptEdit extends Activity implements OnClickListener, DialogInte
             builder.setTitle("Edit");
             builder.setMessage("You are now going to load previous sales data for editing.\n" +
               "If proceed, the sales data is deleted from the csv data.");
-            builder.setPositiveButton("Proceed", this);
+            builder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    loadPastOrder(ReceiptEdit.this.transactionList.get(ReceiptEdit.this.selectedTransaction));
+                    Intent i = new Intent(ReceiptEdit.this, Confirm.class);
+                    startActivity(i);
+                }
+            });
             builder.setNegativeButton(android.R.string.cancel, null);
             builder.create().show();
             break;
         }                
     }
 
-    // event handler for AlertDialog 
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        if (which == android.content.DialogInterface.BUTTON_POSITIVE) {
-            Log.d(TAG, "onClick: BUTTON_POSITIVE");
-            loadPastOrder(this.transactionList.get(this.selectedTransaction));
-            Intent i = new Intent(this, Confirm.class);
-            startActivity(i);
-        }
-    }
-
-    // Build past order list
+     // Build past order list
     private void buildPastOrderList() {
         this.transactionList = receiptHelper.getPastTransactionList();
         
         if (transactionList == null) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setMessage("There is no today's receipt");
-            alertDialogBuilder.setPositiveButton("OK", null);
+            alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent i = new Intent(ReceiptEdit.this, TopMenu.class);
+                    startActivity(i);
+                }
+            });
             alertDialogBuilder.create().show();
             this.transactionList = new ArrayList<Transaction>();
         }
@@ -107,7 +114,8 @@ public class ReceiptEdit extends Activity implements OnClickListener, DialogInte
     }
 
     // Load past order
-    private void loadPastOrder(Transaction transaction) {
+    //    returns true if succeeded
+    private boolean loadPastOrder(Transaction transaction) {
         Log.d(TAG, "loadPastOrder");
 
         globals.initialize();
@@ -121,8 +129,35 @@ public class ReceiptEdit extends Activity implements OnClickListener, DialogInte
             linesToRemove.add(orderItem.lineNumber);
         }
 
-        receiptHelper.removeOldOrder(linesToRemove);
+        // Update the receipt file without linesToRemove
+        List<String> lines = receiptHelper.getPastTransactionLines();
+        File outfile = receiptHelper.getTemporaryReceiptFile();
+        PrintWriter writer = null;
 
+        try {
+            FileOutputStream fout = new FileOutputStream(outfile);
+            writer = new PrintWriter(fout);
+            for(int i = 0; i < lines.size(); i++) {
+                if (linesToRemove.contains(i)) {
+                    continue;
+                }
+                writer.println(lines.get(i));
+            }
+        } catch (IOException e) {
+            Log.d(TAG, e.toString());
+            Toast.makeText(this, "Failed to update the receipt file", Toast.LENGTH_LONG).show();
+            return false;
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
         
-    }
+        boolean result = outfile.renameTo(receiptHelper.getReceiptFile());
+        if (result == false) {
+            Log.d(TAG, "failed to rename temporary receipt file");
+            Toast.makeText(this, "Failed to update the receipt file", Toast.LENGTH_LONG).show();
+        }
+        return result;
+  }
 }
